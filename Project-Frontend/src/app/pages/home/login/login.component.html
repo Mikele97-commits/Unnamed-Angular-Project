@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="UTF-8">
+  <title>Title1</title>
+</head>
+<body>
+<div>
+<h1>Login</h1>
+<form #loginForm="ngForm" (ngSubmit)="userLogin(loginForm)">
+  <input ngModel required type="text" name="username"  placeholder="Username" >
+  <input [type]="showPassword ? 'text' : 'password'" name="password" ngModel required placeholder="Password">
+  <input type="submit" value="Submit">
+  <input type="checkbox" (change)="togglePassword()">Show password
+  <pre>{{loginError}}</pre>
+  <a href="register">Don't have account? Register now!</a>
+</form>
+</div>
+</body>
+</html>

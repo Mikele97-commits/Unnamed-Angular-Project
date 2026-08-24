@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./Project-Backend
+    container_name: Unnamed-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - unnamed-net
+
+  frontend:
+    build: ./Project-Frontend
+    container_name: Unnamed-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - unnamed-net
+
+networks:
+  unnamed-net:
+    driver: bridge

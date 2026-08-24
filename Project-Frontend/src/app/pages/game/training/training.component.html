@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<h1>TRAINING</h1>
+<div>
+  <div>Strength</div>
+  <div>{{trainingDto()?.strength}}</div>
+  <button (click)="addTraining('strength')" >+</button>
+</div>
+<div>
+  <div>Endurance</div>
+  <div>{{trainingDto()?.endurance}}</div>
+  <button (click)="addTraining('endurance')" >+</button>
+</div>
+<div>
+  <div>Perception</div>
+  <div>{{trainingDto()?.perception}}</div>
+  <button (click)="addTraining('perception')" >+</button>
+</div>
+<div>
+  <div>Speed</div>
+  <div>{{trainingDto()?.speed}}</div>
+  <button (click)="addTraining('speed')" >+</button>
+</div>
+<div>
+  <div>Dexterity</div>
+  <div>{{trainingDto()?.dexterity}}</div>
+  <button (click)="addTraining('dexterity')" >+</button>
+</div>
+<div>
+  <div>Luck</div>
+  <div>{{trainingDto()?.luck}}</div>
+  <button (click)="addTraining('luck')" >+</button>
+</div>
+</body>
+</html>

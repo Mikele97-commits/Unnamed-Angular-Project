@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="UTF-8">
+  <title>Title1</title>
+</head>
+<body>
+<div>
+<h1>Register</h1>
+<form #registerForm="ngForm" (ngSubmit)="userRegister(registerForm)">
+  <input ngModel required type="text" name="username"  placeholder="Username" >
+  <input [type]="showPassword ? 'text' : 'password'" name="password" ngModel required placeholder="Password">
+  <input ngModel email required type="email" name="email"  placeholder="E-mail" #email="ngModel">
+  @if (email.invalid && email.touched) {
+    <div>Invalid email format</div>
+  }
+  <input type="submit" value="Submit">
+  <input type="checkbox" (change)="togglePassword()">Show password
+  <a href="">Already have an account? Login here</a>
+</form>
+</div>
+</body>
+</html>
