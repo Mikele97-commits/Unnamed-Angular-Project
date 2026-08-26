@@ -1,1 +1,9 @@
-
+#topDiv {
+  display: flex;
+  background-color: darksalmon;
+  position:fixed;
+  top:0;
+  width:80%;
+  height:10%;
+  z-index:100;
+}

@@ -1,0 +1,10 @@
+<div id="topDiv">
+  <div id="hp">
+    <span>HP</span>
+    <span>{{topDivDto()?.currentHp}}/{{topDivDto()?.maxHp}}</span>
+    <progress max="{{topDivDto()?.maxHp}}" value="{{topDivDto()?.currentHp}}" id="healthBar"></progress>
+  </div>
+<div id="energy"></div>
+</div>
+
+<router-outlet></router-outlet>

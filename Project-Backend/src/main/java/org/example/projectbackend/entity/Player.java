@@ -14,6 +14,9 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private int currEnergy=100;
+    private int maxEnergy=100;
+
     private int strength =5;
     private int endurance =5;
     private int perception =5;
