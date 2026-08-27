@@ -59,7 +59,8 @@ public class UserService {
         }
 
         if(passwordEncoder.matches(password,user.getPassword())){
-            String token=jwtService.generateToken(user.getUsername());
+            System.out.println("generating token for user " + user.getUsername());
+            String token=jwtService.generateToken(user);
             return new AnswerDto("", true, token);
         }
         return new AnswerDto("Incorrect password", false);

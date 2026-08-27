@@ -1,14 +1,9 @@
 package org.example.projectbackend.controller;
 
 import org.example.projectbackend.dto.TrainingAddDto;
-import org.example.projectbackend.dto.TrainingDto;
 import org.example.projectbackend.dto.TrainingResponseDto;
-import org.example.projectbackend.entity.Player;
-import org.example.projectbackend.entity.User;
-import org.example.projectbackend.repository.UserRepository;
 import org.example.projectbackend.service.TrainingService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -17,23 +12,19 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://localhost:4200")
 public class TrainingController {
     private final TrainingService trainingService;
-    private final UserRepository userRepository;
 
 
-    public TrainingController(TrainingService trainingService,  UserRepository userRepository ) {
+    public TrainingController(TrainingService trainingService) {
         this.trainingService = trainingService;
-        this.userRepository = userRepository;
     }
 
     @GetMapping("/training")
-    public TrainingResponseDto getTraining(@AuthenticationPrincipal UserDetails userDetails) {
-        return trainingService.getTrainingStats(userDetails.getUsername());
+    public TrainingResponseDto getTraining(@AuthenticationPrincipal String username) {
+        return trainingService.getTrainingStats(username);
     }
 
     @PostMapping("/training/add")
-    public TrainingResponseDto addTraining(@AuthenticationPrincipal UserDetails userDetails, @RequestBody TrainingAddDto trainingAddDto) {
-        System.out.println(userDetails.getUsername());
-        System.out.println(trainingAddDto.stat());
-        return trainingService.increaseStat(userDetails.getUsername(), trainingAddDto.stat());
+    public TrainingResponseDto addTraining(@AuthenticationPrincipal String username, @RequestBody TrainingAddDto trainingAddDto) {
+        return trainingService.increaseStat(username, trainingAddDto.stat());
     }
 }

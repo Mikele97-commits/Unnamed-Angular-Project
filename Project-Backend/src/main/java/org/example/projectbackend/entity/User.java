@@ -22,4 +22,6 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="player_id")
     private Player player;
+
+    private String role ="USER";
 }

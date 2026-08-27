@@ -1,5 +1,6 @@
-import {Component} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {FormsModule} from '@angular/forms';
+import {AuthService} from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'menu',
@@ -10,4 +11,8 @@ import {FormsModule} from '@angular/forms';
 
 export class MenuComponent {
 
+  authService=inject(AuthService);
+  logout(){
+    this.authService.logout();
+  }
 }

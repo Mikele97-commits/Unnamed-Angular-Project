@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 
+
 @Service
 public class JwtService {
 
@@ -24,9 +25,10 @@ public class JwtService {
         this.expirationTime = expirationTime;
     }
 
-    public String generateToken(String username) {
+    public String generateToken(User user) {
         return Jwts.builder()
-                .subject(username)
+                .subject(user.getUsername())
+                .claim("role", user.getRole())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(key)
@@ -35,14 +37,21 @@ public class JwtService {
 
     public String extractUsername(String token) {
 
-        String username = Jwts.parser()
+        return Jwts.parser()
                 .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
                 .getSubject();
-        System.out.println(username);
-        return username;
+    }
+
+    public String extractRole(String token) {
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("role", String.class);
     }
 
     public boolean isTokenValid(String token) {

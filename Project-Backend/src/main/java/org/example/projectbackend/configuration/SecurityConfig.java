@@ -42,6 +42,7 @@ public class SecurityConfig {
                                 "/v3/api-docs/**"
                         ).permitAll()
 
+                        .requestMatchers("/api/admin/*").hasRole("ADMIN")
                         // Everything else under /api requires authentication
                         .requestMatchers("/api/**").authenticated()
 
