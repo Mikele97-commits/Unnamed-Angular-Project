@@ -2,6 +2,7 @@ package org.example.projectbackend.service;
 
 import jakarta.transaction.Transactional;
 import org.example.projectbackend.dto.TrainingDto;
+import org.example.projectbackend.dto.TrainingResponseDto;
 import org.example.projectbackend.entity.Player;
 import org.example.projectbackend.entity.User;
 import org.example.projectbackend.repository.UserRepository;
@@ -15,21 +16,24 @@ public class TrainingService {
         this.userRepository = userRepository;
     }
 
-    public TrainingDto getTrainingStats(String username) {
+    public TrainingResponseDto getTrainingStats(String username) {
         User user = userRepository.findByUsername(username).orElse(null);
         Player player = user.getPlayer();
-        return new TrainingDto(player.getStrength(), player.getEndurance(), player.getPerception(), player.getSpeed(), player.getDexterity(), player.getLuck());
+        return new TrainingResponseDto("Data loaded", true,new TrainingDto(player.getStrength(), player.getEndurance(), player.getPerception(), player.getSpeed(), player.getDexterity(), player.getLuck()));
     }
 
     @Transactional
-    public TrainingDto increaseStat(String username, String stat) {
+    public TrainingResponseDto increaseStat(String username, String stat) {
         User user = userRepository.findByUsername(username).orElse(null);
         Player player = user.getPlayer();
+        if(player.getCurrEnergy()>=5){
+            player.setCurrEnergy(player.getCurrEnergy()-5);
+        }else{
+            return new TrainingResponseDto("Not enough energy!",false,null);
+        }
         switch (stat) {
             case "strength":
-                System.out.println("adding strength");
                 player.setStrength(player.getStrength() + 1);
-                System.out.println("new strength added: " + player.getStrength());
                 break;
             case "endurance":
                 player.setEndurance(player.getEndurance() + 1);
@@ -47,7 +51,7 @@ public class TrainingService {
                 player.setLuck(player.getLuck() + 1);
                 break;
         }
-        return new TrainingDto(player.getStrength(), player.getEndurance(), player.getPerception(), player.getSpeed(), player.getDexterity(), player.getLuck());
+        return new TrainingResponseDto("Training successful", true,new TrainingDto(player.getStrength(), player.getEndurance(), player.getPerception(), player.getSpeed(), player.getDexterity(), player.getLuck()));
     }
 
 }

@@ -1,2 +1,86 @@
-#healthBar{
+/* Main Persistent Container */
+#topDiv {
+  /* Layout & Centering on Page */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  width: min(650px, 92%);
+  margin: 0 auto;
+
+  /* Game UI Theme Styling */
+  padding: 0.75rem 1.25rem;
+  background: rgba(247, 220, 165, 0.95);
+  border: 1px solid #2a2c3d;
+  border-top: none;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.main-area {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Individual Stat Columns */
+.stat-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Header Text (Label + Numbers) */
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.stat-label {
+  color: black;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-values {
+  color: black;
+  font-family: monospace;
+}
+
+.side-menu {
+  width: 220px;
+  background-color:rgba(247, 220, 165, 0.95);
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+
+.side-menu a {
+  text-decoration: none;
+  padding: 12px 24px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.side-menu a:hover {
+  background-color: rgb(252,210,126);
+}
+
+.side-menu a.active {
+  background-color: rgb(245,192,87);
+  font-weight: 500;
 }

@@ -3,7 +3,8 @@ import {FormsModule} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {TrainingStatsDto, TrainingAddDto} from '../../../models/TrainingStats.model';
 import {CommonModule} from '@angular/common';
-
+import {TrainingResponseDto} from '../../../models/trainingResponse.model';
+import {PlayerStateService} from '../../../core/services/player-state.service';
 
 @Component({
   selector: 'training',
@@ -14,13 +15,14 @@ import {CommonModule} from '@angular/common';
 
 export class TrainingComponent implements OnInit {
   private http = inject(HttpClient);
+  playerState = inject(PlayerStateService);
 
   trainingDto=signal<TrainingStatsDto | null>(null);
-    ngOnInit() {
-    this.http.get<TrainingStatsDto>('/api/training').subscribe(
+  ngOnInit() {
+    this.http.get<TrainingResponseDto>('/api/training').subscribe(
       {
         next: (data) => {
-          this.trainingDto.set(data)
+          this.trainingDto.set(data.trainingStatsDto)
         }
       }
     )
@@ -30,10 +32,16 @@ export class TrainingComponent implements OnInit {
       const statistic: TrainingAddDto={
         stat:stat
     }
-      this.http.post<TrainingStatsDto>('/api/training/add', statistic).subscribe(
+      this.http.post<TrainingResponseDto>('/api/training/add', statistic).subscribe(
         {
           next: (data) =>{
-            this.trainingDto.set(data)
+            if(data.success){
+              this.trainingDto.set(data.trainingStatsDto)
+              this.playerState.loadTopDiv()
+
+            }else{
+              alert(data.message);
+            }
           }
         }
       )

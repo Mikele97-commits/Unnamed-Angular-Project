@@ -2,6 +2,7 @@ package org.example.projectbackend.controller;
 
 import org.example.projectbackend.dto.TrainingAddDto;
 import org.example.projectbackend.dto.TrainingDto;
+import org.example.projectbackend.dto.TrainingResponseDto;
 import org.example.projectbackend.entity.Player;
 import org.example.projectbackend.entity.User;
 import org.example.projectbackend.repository.UserRepository;
@@ -25,12 +26,12 @@ public class TrainingController {
     }
 
     @GetMapping("/training")
-    public TrainingDto getTraining(@AuthenticationPrincipal UserDetails userDetails) {
+    public TrainingResponseDto getTraining(@AuthenticationPrincipal UserDetails userDetails) {
         return trainingService.getTrainingStats(userDetails.getUsername());
     }
 
     @PostMapping("/training/add")
-    public TrainingDto addTraining(@AuthenticationPrincipal UserDetails userDetails, @RequestBody TrainingAddDto trainingAddDto) {
+    public TrainingResponseDto addTraining(@AuthenticationPrincipal UserDetails userDetails, @RequestBody TrainingAddDto trainingAddDto) {
         System.out.println(userDetails.getUsername());
         System.out.println(trainingAddDto.stat());
         return trainingService.increaseStat(userDetails.getUsername(), trainingAddDto.stat());

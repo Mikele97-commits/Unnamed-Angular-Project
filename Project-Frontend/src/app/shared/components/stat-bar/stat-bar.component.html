@@ -1,0 +1,8 @@
+<div class="stat-track">
+  <div
+    class="stat-fill"
+    [class]="type"
+    [style.width.%]="percentage">
+  </div>
+  <span class="stat-text">{{ current }} / {{ max }} {{ type | uppercase }}</span>
+</div>

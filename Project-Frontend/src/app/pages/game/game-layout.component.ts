@@ -1,33 +1,24 @@
 import {Component, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
-import {HttpClient} from '@angular/common/http';
-import {TopDivDto} from '../../models/topDiv.model';
-import {TrainingStatsDto} from '../../models/TrainingStats.model';
-import {RouterOutlet} from '@angular/router';
+import {RouterLink, RouterOutlet, RouterLinkActive} from '@angular/router';
+import {StatBarComponent} from '../../shared/components/stat-bar/stat-bar.component';
+import {PlayerStateService} from '../../core/services/player-state.service';
 
 @Component({
   selector: 'layout',
-  imports: [FormsModule,CommonModule, RouterOutlet],
+  imports: [FormsModule, CommonModule, RouterOutlet, StatBarComponent, RouterLink, RouterLinkActive],
   templateUrl: 'game-layout.component.html',
   styleUrl: 'game-layout.component.css'
 })
 
 export class GameLayoutComponent implements OnInit {
 
-  private http = inject(HttpClient);
+  playerState = inject(PlayerStateService);
 
-  topDivDto=signal<TopDivDto | null>(null);
+  topDivDto=this.playerState.topDivDto;
   ngOnInit() {
-    this.http.get<TopDivDto>('/api/topDiv').subscribe(
-      {
-        next:(data) =>{
-          this.topDivDto.set(data);
-        }
-      }
-
-    )
-
+      this.playerState.loadTopDiv();
   }
 
 }
