@@ -84,3 +84,8 @@
   background-color: rgb(245,192,87);
   font-weight: 500;
 }
+.content {
+  flex: 1;
+  padding: 24px;
+  min-width: 0;
+}

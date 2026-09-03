@@ -1,0 +1,43 @@
+.locations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px;
+  width: 100%;
+  min-height: 200px;
+  background-color: deeppink;
+}
+
+.location-card {
+  width: 300px;
+  height: 200px;
+
+
+  border-radius: 18px;            /* squircle-ish */
+  background-color: rgba(13, 36, 84, 0.55);  /* deep blue + transparent */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-decoration: none;
+  color: white;
+  font-weight: 600;
+  font-size: 1.1rem;
+
+  background-size: cover;
+  background-position: center;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.location-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+.location-card.sewers {
+  background-image: linear-gradient(rgba(13, 36, 84, 0.45), rgba(13, 36, 84, 0.45)),
+  url('/assets/locations/sewers.jpg');
+}

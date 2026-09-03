@@ -31,6 +31,22 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
+  getRole(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.role || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  isAdmin(): boolean {
+    return this.getRole() === 'ADMIN';
+  }
+
   getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
   }
@@ -51,4 +67,6 @@ export class AuthService {
   isLoggedIn(): boolean {
     return !!this.getToken();
   }
+
+
 }

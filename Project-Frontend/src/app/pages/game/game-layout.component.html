@@ -23,12 +23,20 @@
     <app-stat-bar [current]="topDivDto()?.currentExp ?? 0" [max]="topDivDto()?.nxtLvlExp ?? 0" type="exp"></app-stat-bar>
   </div>
 </div>
+
+
 <div class="main-area">
-<nav class="side-menu">
-  <a routerLink="/menu" routerLinkActive="active">Home</a>
-  <a routerLink="/training" routerLinkActive="active">Training</a>
-</nav>
 
+  <nav class="side-menu">
+    <a routerLink="/menu" routerLinkActive="active">Home</a>
+    <a routerLink="/training" routerLinkActive="active">Training</a>
+    <a routerLink="/expedition" routerLinkActive="active">Expedition</a>
+    @if (authService.isAdmin()) {
+      <a routerLink="/admin" routerLinkActive="active">Admin Panel</a>
+    }
+  </nav>
 
-<router-outlet></router-outlet>
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
 </div>

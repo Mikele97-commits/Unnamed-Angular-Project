@@ -4,6 +4,7 @@ import {CommonModule} from '@angular/common';
 import {RouterLink, RouterOutlet, RouterLinkActive} from '@angular/router';
 import {StatBarComponent} from '../../shared/components/stat-bar/stat-bar.component';
 import {PlayerStateService} from '../../core/services/player-state.service';
+import {AuthService} from '../../core/auth/auth.service';
 
 @Component({
   selector: 'layout',
@@ -15,7 +16,9 @@ import {PlayerStateService} from '../../core/services/player-state.service';
 export class GameLayoutComponent implements OnInit {
 
   playerState = inject(PlayerStateService);
+  authService=inject(AuthService);
 
+  isAdmin=this.authService.isAdmin;
   topDivDto=this.playerState.topDivDto;
   ngOnInit() {
       this.playerState.loadTopDiv();

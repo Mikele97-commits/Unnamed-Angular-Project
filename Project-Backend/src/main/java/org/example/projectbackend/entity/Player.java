@@ -17,6 +17,8 @@ public class Player {
     private int currEnergy=100;
     private int maxEnergy=100;
 
+    private int baseDmg=5;
+
     private int strength =5;
     private int endurance =5;
     private int perception =5;
@@ -34,6 +36,8 @@ public class Player {
 
     private int questPoints = 12;
     private int dungPoints= 12;
+
+    private int gold=0;
 
 
     @OneToOne(mappedBy = "player")

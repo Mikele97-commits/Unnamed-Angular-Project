@@ -1,0 +1,28 @@
+<form #energyForm="ngForm" (ngSubmit)="setEnergy(energyForm)">
+  <div>
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" [(ngModel)]="username" required>
+  </div>
+
+  <div>
+    <label for="amount">Energy amount</label>
+    <input type="number" id="amount" name="amount" [(ngModel)]="amount" required>
+  </div>
+
+  <button type="submit">Set Energy</button>
+</form>
+
+<form #hpForm="ngForm" (ngSubmit)="setHp(hpForm)">
+  <div>
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" [(ngModel)]="username" required>
+  </div>
+
+  <div>
+    <label for="amount">Hp amount</label>
+    <input type="number" id="amount" name="amount" [(ngModel)]="amount" required>
+  </div>
+
+  <button type="submit">Set Hp</button>
+</form>
+
