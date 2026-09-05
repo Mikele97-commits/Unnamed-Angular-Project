@@ -16,11 +16,10 @@ public class MonsterSeeder implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-
-            monsterRepository.save(createMonster("Rat", "Sewer", 1, 2,2, 3,5,5,7,2,30,5,20));
-
-
-    }
+        if(monsterRepository.count() == 0) {
+            monsterRepository.save(createMonster("Rat", "Sewer", 1, 2, 2, 3, 5, 5, 7, 2, 30, 5, 20));
+        }
+        }
 
     private Monster createMonster(String name, String location, int level, int baseDamage,
                                   int strength, int endurance, int perception, int speed,

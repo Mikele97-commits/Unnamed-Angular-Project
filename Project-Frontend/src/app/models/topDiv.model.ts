@@ -9,4 +9,5 @@ export interface TopDivDto{
   nxtLvlExp: number;
 
   questPoints: number;
+  gold: number;
 }

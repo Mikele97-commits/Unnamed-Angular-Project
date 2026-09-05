@@ -17,9 +17,19 @@ export class SewersComponent {
 
   private http= inject(HttpClient)
   private router=inject(Router)
+  playerState=inject(PlayerStateService)
+
 
   fightRat() : void{
-
+    this.http.get<pvmReport>('api/expedition/Rat').subscribe({
+      next: (dto:pvmReport)=>{
+        this.playerState.loadTopDiv()
+        this.router.navigate(['report'], {state:{report:dto}});
+      },
+      error: (err) => {
+        console.error('POST failed', err);
+      }
+    })
   }
 
 

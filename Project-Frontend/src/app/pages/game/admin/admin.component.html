@@ -1,12 +1,12 @@
 <form #energyForm="ngForm" (ngSubmit)="setEnergy(energyForm)">
   <div>
     <label for="username">Username</label>
-    <input type="text" id="username" name="username" [(ngModel)]="username" required>
+    <input type="text" id="energyUsername" name="energyUsername" [(ngModel)]="energyUsername" required>
   </div>
 
   <div>
     <label for="amount">Energy amount</label>
-    <input type="number" id="amount" name="amount" [(ngModel)]="amount" required>
+    <input type="number" id="energyAmount" name="energyAmount" [(ngModel)]="energyAmount" required>
   </div>
 
   <button type="submit">Set Energy</button>
@@ -15,12 +15,12 @@
 <form #hpForm="ngForm" (ngSubmit)="setHp(hpForm)">
   <div>
     <label for="username">Username</label>
-    <input type="text" id="username" name="username" [(ngModel)]="username" required>
+    <input type="text" id="hpUsername" name="hpUsername" [(ngModel)]="hpUsername" required>
   </div>
 
   <div>
     <label for="amount">Hp amount</label>
-    <input type="number" id="amount" name="amount" [(ngModel)]="amount" required>
+    <input type="number" id="hpAmount" name="hpAmount" [(ngModel)]="hpAmount" required>
   </div>
 
   <button type="submit">Set Hp</button>

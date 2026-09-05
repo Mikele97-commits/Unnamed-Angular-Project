@@ -22,6 +22,17 @@
     </div>
     <app-stat-bar [current]="topDivDto()?.currentExp ?? 0" [max]="topDivDto()?.nxtLvlExp ?? 0" type="exp"></app-stat-bar>
   </div>
+
+  <div class="gold&points">
+    <div class="gold">
+      <div id="goldIcon"></div>
+      {{topDivDto()?.gold}}
+    </div>
+    <div class="points">
+      <div id="pointsIcon"></div>
+      {{topDivDto()?.questPoints}}
+    </div>
+  </div>
 </div>
 
 

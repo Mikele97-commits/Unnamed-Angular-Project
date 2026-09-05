@@ -59,7 +59,7 @@ public class FightService {
         FightResult fightResult = new FightResult();
         fightResult.setUsername(username);
         fightResult.setMonsterName(monsterName);
-        fightResult.setFoughtAt(LocalDateTime.now());
+        fightResult.setFoughtAt(LocalDateTime.now().toString());
 
         User user = userRepository.findByUsername(username).orElse(null);
         Player player = user.getPlayer();

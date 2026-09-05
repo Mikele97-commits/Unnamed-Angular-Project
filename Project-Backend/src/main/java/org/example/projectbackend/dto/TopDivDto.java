@@ -10,6 +10,7 @@ public record TopDivDto(
         @JsonProperty("maxHp") int maxHp,
         @JsonProperty("currentExp") int currentExp,
         @JsonProperty("nxtLvlExp") int nxtLvlExp,
-        @JsonProperty("questPoints") int questPoints
+        @JsonProperty("questPoints") int questPoints,
+        @JsonProperty("gold") int gold
 
 ) {}

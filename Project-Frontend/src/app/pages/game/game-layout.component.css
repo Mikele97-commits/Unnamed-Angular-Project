@@ -89,3 +89,29 @@
   padding: 24px;
   min-width: 0;
 }
+.gold\&points{
+  display: flex;
+  flex-direction: column;
+}
+.gold {
+  display: flex;
+  flex-direction: row;
+}
+#goldIcon{
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-image: url("/assets/icons/gold.jpg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+#pointsIcon{
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-image: url("/assets/icons/points.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}

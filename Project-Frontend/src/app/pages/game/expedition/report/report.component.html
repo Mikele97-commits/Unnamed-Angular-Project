@@ -1,0 +1,67 @@
+@if (report){
+<div class="report-container">
+  <div class="report-header" [class.win]="report.playerWon" [class.lose]="!report.playerWon">
+    <div class="header-top">
+      <div class="title">
+        <h1>{{ report.username }} vs {{ report.monsterName }}</h1>
+        <span class="badge" [class.win-badge]="report.playerWon" [class.lose-badge]="!report.playerWon">
+          {{ report.playerWon ? 'VICTORY' : 'DEFEAT' }}
+        </span>
+      </div>
+      <div class="meta">
+        <span>{{ report.localDateTime | date:'medium' }}</span>
+        <span class="id">#{{ report.id }}</span>
+      </div>
+    </div>
+
+    <div class="rewards">
+      <div class="reward">
+        <span class="label">Experience</span>
+        <span class="value exp">+{{ report.expGained | number }}</span>
+      </div>
+      <div class="reward">
+        <span class="label">Gold</span>
+        <span class="value gold">+{{ report.goldGained | number }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="log-section">
+    <h2>Fight Log</h2>
+
+    <div class="log-list">
+      @for (entry of report.log; track entry.round) {
+        <div class="log-entry" [class.end-fight]="entry.endOfFight">
+          <div class="round-badge">Round {{ entry.round }}</div>
+
+          <div class="entry-content">
+            <div class="actor">{{ entry.actor }}</div>
+
+            <div class="messages">
+              @if (entry.message) {
+                <p class="main-message">{{ entry.message }}</p>
+              }
+
+              @if (entry.doubleHit) {
+                <div class="double-hit">
+                  <span class="tag">Double Hit</span>
+                  @if (entry.doubleHitMessage) {
+                    <span>{{ entry.doubleHitMessage }}</span>
+                  }
+                </div>
+              }
+
+              @if (entry.endOfFight) {
+                <div class="end-of-fight">
+                  {{ entry.endOfFight }}
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+}
+

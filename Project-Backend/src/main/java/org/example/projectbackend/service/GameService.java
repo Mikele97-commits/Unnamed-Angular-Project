@@ -18,6 +18,6 @@ public class GameService {
         User user = userRepository.findByUsername(username).orElse(null);
         Player player = user.getPlayer();
         System.out.println("Taking data of player "+user.getUsername());
-        return new TopDivDto(player.getCurrEnergy(), player.getMaxEnergy(), player.getCurrentHP(), player.getFinalHP(), player.getCurrentExp(), player.getNxtLvlExp(), player.getQuestPoints());
+        return new TopDivDto(player.getCurrEnergy(), player.getMaxEnergy(), player.getCurrentHP(), player.getFinalHP(), player.getCurrentExp(), player.getNxtLvlExp(), player.getQuestPoints(), player.getGold());
     }
 }

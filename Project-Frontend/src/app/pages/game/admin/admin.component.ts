@@ -15,14 +15,16 @@ import {PlayerStateService} from '../../../core/services/player-state.service';
 export class AdminComponent{
   playerStateService=inject(PlayerStateService);
   private http = inject(HttpClient);
-  username ='';
-  amount: number | null = null;
+  energyUsername ='';
+  energyAmount: number | null = null;
+  hpUsername ='';
+  hpAmount: number | null = null;
 
   setEnergy(form:any): void {
     const adminDto : AdminDto =
     {
-       username:form.value.username,
-       amount:form.value.amount
+       username:form.value.energyUsername,
+       amount:form.value.energyAmount
     }
     this.http.post('/api/admin/set-energy', adminDto).subscribe({
       next: ()=>{
@@ -37,8 +39,8 @@ export class AdminComponent{
   setHp(form:any):void {
     const adminDto : AdminDto =
       {
-        username:form.value.username,
-        amount:form.value.amount
+        username:form.value.hpUsername,
+        amount:form.value.hpAmount
       }
       this.http.post('/api/admin/set-hp', adminDto).subscribe({
         next: ()=>{

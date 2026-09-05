@@ -26,7 +26,7 @@ public class FightResult {
     private boolean playerWon;
     private int expGained;
     private int goldGained;
-    private LocalDateTime foughtAt;
+    private String foughtAt;
 
     @JdbcTypeCode(SqlTypes.JSON)
     private List<FightLogEntry> log;
