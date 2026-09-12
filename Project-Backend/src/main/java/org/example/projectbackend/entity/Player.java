@@ -42,6 +42,12 @@ public class Player {
 
     @OneToOne(mappedBy = "player")
     User user;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="inventory_id")
+    Inventory inventory;
+
+
 }
 
 
