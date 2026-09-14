@@ -19,6 +19,8 @@ export class AdminComponent{
   energyAmount: number | null = null;
   hpUsername ='';
   hpAmount: number | null = null;
+  giveItemUsername='';
+  giveItemId:number | null= null;
 
   setEnergy(form:any): void {
     const adminDto : AdminDto =
@@ -48,5 +50,19 @@ export class AdminComponent{
           this.playerStateService.loadTopDiv()
         }
       })
+  }
+
+  giveItem(form:any):void {
+    const adminDto : AdminDto =
+      {
+        username:form.value.giveItemUsername,
+        amount:form.value.giveItemId
+      }
+    this.http.post('/api/admin/add-item', adminDto).subscribe({
+      next: ()=>{
+        console.log("Item added successfully");
+        this.playerStateService.loadTopDiv()
+      }
+    })
   }
 }

@@ -7,10 +7,9 @@ import lombok.Setter;
 @Entity
 @Setter
 @Getter
-public class Weapon extends Item {
+public class Weapon extends ItemTemplate {
 
 
-    private int lvl;
     private int minDmg;
     private int maxDmg;
 

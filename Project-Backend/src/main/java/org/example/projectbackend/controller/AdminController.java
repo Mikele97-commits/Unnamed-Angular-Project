@@ -4,7 +4,9 @@ import jakarta.transaction.Transactional;
 import org.example.projectbackend.dto.AdminDto;
 import org.example.projectbackend.entity.Player;
 import org.example.projectbackend.entity.User;
+import org.example.projectbackend.repository.ItemTemplateRepository;
 import org.example.projectbackend.repository.UserRepository;
+import org.example.projectbackend.service.InventoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +15,13 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://localhost:4200")
 public class AdminController {
     UserRepository userRepository;
+    ItemTemplateRepository itemTemplateRepository;
+    InventoryService inventoryService;
 
-    public AdminController(UserRepository userRepository) {
+    public AdminController(InventoryService inventoryService, UserRepository userRepository,ItemTemplateRepository itemTemplateRepository) {
         this.userRepository = userRepository;
+        this.itemTemplateRepository = itemTemplateRepository;
+        this.inventoryService = inventoryService;
     }
     @PostMapping("/set-energy")
     @Transactional
@@ -44,6 +50,13 @@ public class AdminController {
         if(player.getCurrentHP()<0){
             player.setCurrentHP(0);
         }
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/add-item")
+    @Transactional
+    public ResponseEntity<String> addItem(@RequestBody AdminDto adminDto) {
+        inventoryService.addItem(adminDto.username(), adminDto.amount());
         return ResponseEntity.ok().build();
     }
 

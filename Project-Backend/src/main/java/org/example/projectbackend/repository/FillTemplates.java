@@ -6,22 +6,25 @@ import org.example.projectbackend.entity.items.Armor;
 import org.example.projectbackend.entity.items.Weapon;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 public class FillTemplates implements ApplicationRunner {
 
+    PasswordEncoder passwordEncoder;
     MonsterRepository monsterRepository;
     WeaponTemplateRepository weaponTemplateRepository;
     ArmorTemplateRepository armorTemplateRepository;
     UserRepository userRepository;
 
 
-    public FillTemplates(UserRepository userRepository, ArmorTemplateRepository armorTemplateRepository, MonsterRepository monsterRepository,WeaponTemplateRepository weaponTemplateRepository){
+    public FillTemplates(PasswordEncoder passwordEncoder, UserRepository userRepository, ArmorTemplateRepository armorTemplateRepository, MonsterRepository monsterRepository,WeaponTemplateRepository weaponTemplateRepository){
         this.monsterRepository = monsterRepository;
         this.weaponTemplateRepository=weaponTemplateRepository;
         this.userRepository = userRepository;
         this.armorTemplateRepository=armorTemplateRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -40,7 +43,7 @@ public class FillTemplates implements ApplicationRunner {
         }
 
         if(userRepository.count() == 0) {
-            userRepository.save(new User("admin", "admin", "admin@o2.pl","ADMIN"));
+            userRepository.save(new User("admin", passwordEncoder.encode("admin123"), "admin@o2.pl","ADMIN"));
         }
     }
 

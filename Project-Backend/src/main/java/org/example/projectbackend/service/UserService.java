@@ -1,5 +1,6 @@
 package org.example.projectbackend.service;
 import org.example.projectbackend.dto.AnswerDto;
+import org.example.projectbackend.entity.Inventory;
 import org.example.projectbackend.entity.Player;
 import org.example.projectbackend.entity.User;
 import org.example.projectbackend.repository.UserRepository;

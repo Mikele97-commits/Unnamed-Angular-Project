@@ -4,6 +4,11 @@ package org.example.projectbackend.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.projectbackend.entity.items.Armor;
+import org.example.projectbackend.entity.items.Weapon;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -39,13 +44,20 @@ public class Player {
 
     private int gold=0;
 
+    @OneToOne
+    @JoinColumn(name = "equipped_weapon_id")
+    private Weapon equippedWeapon;
+
+    @OneToOne
+    @JoinColumn(name = "equipped_armor_id")
+    private Armor equippedArmor;
 
     @OneToOne(mappedBy = "player")
     User user;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name="inventory_id")
-    Inventory inventory;
+    private  List<Inventory> inventory = new ArrayList<>();
 
 
 }

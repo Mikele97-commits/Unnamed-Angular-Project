@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -22,7 +24,6 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="player_id")
     private Player player;
-
     private String role ="USER";
 
     public User(String username, String password, String email, String role) {
@@ -30,6 +31,7 @@ public class User {
         this.password = password;
         this.email = email;
         this.role = role;
+        this.player=new Player();
     }
 
     public User() {}

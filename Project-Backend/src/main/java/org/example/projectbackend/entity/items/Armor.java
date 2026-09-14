@@ -8,7 +8,7 @@ import lombok.Setter;
 @Entity
 @Setter
 @Getter
-public class Armor extends Item{
+public class Armor extends ItemTemplate {
 
     private int armor;
     private int plus;

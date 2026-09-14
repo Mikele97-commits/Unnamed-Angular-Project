@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Item {
+public abstract class ItemTemplate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,9 +19,9 @@ public abstract class Item {
     private int price;
     private int lvl;
 
-    protected Item() {}
+    protected ItemTemplate() {}
 
-    public Item(String name, String type, int price, int lvl) {
+    public ItemTemplate(String name, String type, int price, int lvl) {
         this.name = name;
         this.type = type;
         this.price = price;
