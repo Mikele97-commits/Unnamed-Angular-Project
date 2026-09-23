@@ -1,4 +1,9 @@
 export interface TopDivDto{
+  name: string;
+
+  minDmg: number;
+  maxDmg: number;
+
   currEnergy: number;
   maxEnergy: number;
 

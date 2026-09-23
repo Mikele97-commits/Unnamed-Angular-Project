@@ -14,16 +14,19 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class FightService {
     MonsterRepository monsterRepository;
     UserRepository userRepository;
     PvMRepository pvMRepository;
-    public FightService(MonsterRepository monsterRepository, UserRepository userRepository,PvMRepository pvMRepository) {
+    GameService gameService;
+    public FightService(GameService gameService, MonsterRepository monsterRepository, UserRepository userRepository,PvMRepository pvMRepository) {
         this.monsterRepository = monsterRepository;
         this.userRepository = userRepository;
         this.pvMRepository = pvMRepository;
+        this.gameService = gameService;
     }
     public Monster createMonster(String monsterName){
         Monster monster = new Monster();
@@ -78,7 +81,7 @@ public class FightService {
         double secondHitMIncrease=((double)(monster.getSpeed()-player.getSpeed())/(double)player.getSpeed());
         List<FightLogEntry> logEntries = new ArrayList<>();
         for(int i=0; i<10;i++){
-            if(round(i+1,player,monster,secondHitList, logEntries, pointsList)){
+            if(round(i+1,user,monster,secondHitList, logEntries, pointsList)){
                 break;
             }
             secondHitList.set(0, secondHitList.get(0)+secondHitPIncrease);
@@ -110,7 +113,8 @@ public class FightService {
         return fightResult;
     }
 
-    public boolean round(int round, Player player, Monster monster, List<Double> secondHitList, List<FightLogEntry> logEntries, List<Integer> pointsList){
+    public boolean round(int round, User user, Monster monster, List<Double> secondHitList, List<FightLogEntry> logEntries, List<Integer> pointsList){
+        Player player = user.getPlayer();
         FightLogEntry fightLogEntry = new FightLogEntry();
         fightLogEntry.setRound(round);
         fightLogEntry.setActor(player.getUser().getUsername());
@@ -124,13 +128,13 @@ public class FightService {
         //Player starts with attack
         for(int i=1;i<=times;i++) {
             if (checkHit(player.getPerception(), monster.getDexterity(), player.getLvl() - monster.getLevel())) {
-                int dmg = player.getBaseDmg() + (player.getStrength() / 5);
-                monster.setHp(monster.getHp() - dmg);
-                pointsList.set(0, pointsList.get(0) + dmg);
+                int[] damages=gameService.calculateDmg(user.getUsername());
+                monster.setHp(monster.getHp() - calculateDmg(damages));
+                pointsList.set(0, pointsList.get(0) + calculateDmg(damages));
                 if(i!=2) {
-                    fightLogEntry.setMessage("You hit for " +dmg+ " hit points.");
+                    fightLogEntry.setMessage("You hit for " +calculateDmg(damages)+ " hit points.");
                 }else {
-                    fightLogEntry.setDoubleHitMessage("You hit for " +dmg+ " hit points.");
+                    fightLogEntry.setDoubleHitMessage("You hit for " +calculateDmg(damages)+ " hit points.");
                 }
             }else {
                 if(i!=2) {
@@ -193,6 +197,14 @@ public class FightService {
         hitChance = Math.max(20.0, Math.min(95.0, hitChance));
         double roll = Math.random() * 100;
         return roll < hitChance;
+    }
+
+    private int calculateDmg(int[] minMax){
+        int min=minMax[0];
+        int max=minMax[1];
+
+        Random rand = new Random();
+        return rand.nextInt((max-min)+1)+min;
     }
 
 

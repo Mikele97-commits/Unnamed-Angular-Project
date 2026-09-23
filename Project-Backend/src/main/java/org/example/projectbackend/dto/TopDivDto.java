@@ -4,6 +4,9 @@ package org.example.projectbackend.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record TopDivDto(
+        @JsonProperty("minDmg") int minDmg,
+        @JsonProperty("maxDmg") int maxDmg,
+        @JsonProperty("name")  String name,
         @JsonProperty("currEnergy") int currEnergy,
         @JsonProperty("maxEnergy") int maxEnergy,
         @JsonProperty("currentHp") int currentHp,

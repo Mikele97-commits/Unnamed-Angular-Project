@@ -46,17 +46,16 @@ public class Player {
 
     @OneToOne
     @JoinColumn(name = "equipped_weapon_id")
-    private Weapon equippedWeapon;
+    private Inventory equippedWeapon;
 
     @OneToOne
     @JoinColumn(name = "equipped_armor_id")
-    private Armor equippedArmor;
+    private Inventory equippedArmor;
 
     @OneToOne(mappedBy = "player")
     User user;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name="inventory_id")
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
     private  List<Inventory> inventory = new ArrayList<>();
 
 

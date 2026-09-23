@@ -18,6 +18,24 @@ public class GameService {
         User user = userRepository.findByUsername(username).orElse(null);
         Player player = user.getPlayer();
         System.out.println("Taking data of player "+user.getUsername());
-        return new TopDivDto(player.getCurrEnergy(), player.getMaxEnergy(), player.getCurrentHP(), player.getFinalHP(), player.getCurrentExp(), player.getNxtLvlExp(), player.getQuestPoints(), player.getGold());
+        int[] damages=calculateDmg(username);
+        return new TopDivDto(damages[0],damages[1], username, player.getCurrEnergy(), player.getMaxEnergy(), player.getCurrentHP(), player.getFinalHP(), player.getCurrentExp(), player.getNxtLvlExp(), player.getQuestPoints(), player.getGold());
+    }
+
+    public int[] calculateDmg(String username){
+        User user = userRepository.findByUsername(username).orElse(null);
+        Player player = user.getPlayer();
+        int min;
+        int max;
+        if(player.getEquippedWeapon()!=null){
+             min=player.getEquippedWeapon().getFinalMinDmg();
+             max=player.getEquippedWeapon().getFinalMaxDmg();
+        }else{
+            min=0;
+            max=0;
+        }
+        int finalMin=player.getBaseDmg()+min+ player.getStrength()/5;
+        int finalMax=player.getBaseDmg()+max+ player.getStrength()/5;
+        return new int[]{finalMin,finalMax};
     }
 }
