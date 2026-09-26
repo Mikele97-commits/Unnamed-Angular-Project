@@ -30,7 +30,7 @@ public class FillTemplates implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         if(monsterRepository.count() == 0) {
-            monsterRepository.save(new Monster("Rat", "Sewer", 1, 2, 2, 3, 5, 5, 7, 2, 30, 5, 20));
+            monsterRepository.save(new Monster("Rat", "Sewer", 1, 4, 5, 5, 2, 3, 5, 5, 7, 2, 30, 5, 20));
         }
 
         if(weaponTemplateRepository.count() == 0) {

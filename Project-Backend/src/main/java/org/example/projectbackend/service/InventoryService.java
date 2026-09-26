@@ -47,11 +47,27 @@ public class InventoryService {
             }
             if(type.equals("armor")){
                 player.setEquippedArmor(inventory);
-                userRepository.save(user);
             } else if (type.equals("weapon")) {
                 player.setEquippedWeapon(inventory);
-                userRepository.save(user);
             }
+            userRepository.save(user);
+
+
+        }
+
+        public void unequipItem(String username,int itemId){
+            System.out.println("got request for user "+username+" to unequip item "+itemId);
+            User user = userRepository.findByUsername(username).orElse(null);
+            Player player = user.getPlayer();
+            Inventory inventory = inventoryRepository.findById(itemId).orElse(null);
+            String type = inventory.getType();
+            if(type.equals("armor")){
+                player.setEquippedArmor(null);
+            } else if (type.equals("weapon")) {
+                player.setEquippedWeapon(null);
+            }
+            inventory.setEquipped(false);
+            userRepository.save(user);
 
         }
 

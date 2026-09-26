@@ -129,12 +129,13 @@ public class FightService {
         for(int i=1;i<=times;i++) {
             if (checkHit(player.getPerception(), monster.getDexterity(), player.getLvl() - monster.getLevel())) {
                 int[] damages=gameService.calculateDmg(user.getUsername());
-                monster.setHp(monster.getHp() - calculateDmg(damages));
-                pointsList.set(0, pointsList.get(0) + calculateDmg(damages));
+                int monsterArmor= monster.getArmor();
+                monster.setHp(monster.getHp() - calculateDmg(damages, monsterArmor));
+                pointsList.set(0, pointsList.get(0) + calculateDmg(damages, monsterArmor));
                 if(i!=2) {
-                    fightLogEntry.setMessage("You hit for " +calculateDmg(damages)+ " hit points.");
+                    fightLogEntry.setMessage("You hit for " +calculateDmg(damages, monsterArmor)+ " hit points.");
                 }else {
-                    fightLogEntry.setDoubleHitMessage("You hit for " +calculateDmg(damages)+ " hit points.");
+                    fightLogEntry.setDoubleHitMessage("You hit for " +calculateDmg(damages, monsterArmor)+ " hit points.");
                 }
             }else {
                 if(i!=2) {
@@ -165,13 +166,15 @@ public class FightService {
         }
         for(int i=1;i<=times;i++) {
             if (checkHit(monster.getPerception(), player.getDexterity(), monster.getLevel() - player.getLvl())) {
-                int dmg = monster.getBaseDamage() + (monster.getStrength() / 5);
-                player.setCurrentHP(player.getCurrentHP() - dmg);
-                pointsList.set(1, pointsList.get(1) + dmg);
+                int[] damages = gameService.calculateMonsterDmg(monster.getName());
+                int playerArmor= gameService.armor(user.getUsername());
+                int finalDmg=calculateDmg(damages, monster.getArmor());
+                player.setCurrentHP(player.getCurrentHP() - finalDmg);
+                pointsList.set(1, pointsList.get(1) + finalDmg);
                 if(i!=2) {
-                    fightLogEntry.setMessage(monster.getName() + " hits for " + dmg + " hit points.");
+                    fightLogEntry.setMessage(monster.getName() + " hits for " + finalDmg + " hit points.");
                 }else{
-                    fightLogEntry.setDoubleHitMessage(monster.getName() + " hits for " + dmg + " hit points.");
+                    fightLogEntry.setDoubleHitMessage(monster.getName() + " hits for " + finalDmg + " hit points.");
                 }
             }else{
                 if(i!=2) {
@@ -199,12 +202,14 @@ public class FightService {
         return roll < hitChance;
     }
 
-    private int calculateDmg(int[] minMax){
+    private int calculateDmg(int[] minMax, int armor){
         int min=minMax[0];
         int max=minMax[1];
 
         Random rand = new Random();
-        return rand.nextInt((max-min)+1)+min;
+        int dmg= rand.nextInt((max-min)+1)+min;
+        float finalDmg=(float)dmg*(100/(100+(float)armor));
+        return (int)finalDmg;
     }
 
 

@@ -29,5 +29,10 @@ public class InventoryController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("unequipItem")
+    public ResponseEntity<String> unequipItem(@AuthenticationPrincipal String username, @RequestBody int itemId){
+        inventoryService.unequipItem(username,itemId);
+        return ResponseEntity.ok().build();
+    }
 }
 

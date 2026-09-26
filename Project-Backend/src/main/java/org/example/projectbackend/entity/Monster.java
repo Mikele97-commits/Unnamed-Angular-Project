@@ -20,7 +20,9 @@ public class Monster {
     private String location;
     private int level;
 
-    private int baseDamage;
+    private int minDamage;
+    private int maxDamage;
+    private int armor;
     private int strength;
     private int endurance;
     private int perception;
@@ -33,11 +35,13 @@ public class Monster {
     private int goldReward;
 
 
-    public Monster(String name, String location, int level, int baseDamage, int strength, int endurance, int perception, int speed, int dexterity, int luck, int hp, int expReward, int goldReward) {
+    public Monster(String name, String location, int level, int minDamage, int maxDamage, int armor, int strength, int endurance, int perception, int speed, int dexterity, int luck, int hp, int expReward, int goldReward) {
         this.name = name;
         this.location = location;
         this.level = level;
-        this.baseDamage = baseDamage;
+        this.minDamage = minDamage;
+        this.maxDamage = maxDamage;
+        this.armor = armor;
         this.strength = strength;
         this.endurance = endurance;
         this.perception = perception;

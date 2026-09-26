@@ -35,6 +35,18 @@ export class MenuComponent implements OnInit {
       }
     )
   }
+
+  unequipItem(itemId:number){
+    this.http.post('/api/inventory/unequipItem',itemId).subscribe(
+      {
+        next:(data) => {
+          console.log(data);
+          this.refresh();
+        }
+      }
+    )
+  }
+
   items = signal<any[]>([]);  expandedId: number | null = null;
   toggleItem(id: number) {
     this.expandedId = this.expandedId === id ? null : id;

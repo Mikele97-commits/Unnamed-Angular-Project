@@ -24,6 +24,8 @@ public class Player {
 
     private int baseDmg=5;
 
+    private int armor=0;
+
     private int strength =5;
     private int endurance =5;
     private int perception =5;

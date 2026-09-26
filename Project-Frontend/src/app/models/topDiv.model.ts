@@ -4,6 +4,8 @@ export interface TopDivDto{
   minDmg: number;
   maxDmg: number;
 
+  armor: number;
+
   currEnergy: number;
   maxEnergy: number;
 

@@ -42,6 +42,10 @@
       <span class="stat-label">Damage</span>
       <span class="stat-value">{{playerState.topDivDto()?.minDmg}}-{{playerState.topDivDto()?.maxDmg}}</span>
     </div>
+    <div class="stat-row">
+      <span class="stat-label">Armor</span>
+      <span class="stat-value">{{ playerState.topDivDto()?.armor }}</span>
+    </div>
   </div>
 </div>
 
@@ -57,7 +61,11 @@
                 <span class="item-lvl">Lvl {{ item.lvl }}</span>
                 <span class="item-price">{{ item.price }} gold</span>
                 <span class="expand-icon">{{ expandedId === item.id ? '▲' : '▼' }}</span>
-                <button (click)="equipItem(item.id)">Equip</button>
+                @if (item.equipped){
+                  <button (click)="unequipItem(item.id)">Unequip</button>
+                } @else {
+                  <button (click)="equipItem(item.id)">Equip</button>
+                }
               </div>
 
               <!-- Expanded details -->

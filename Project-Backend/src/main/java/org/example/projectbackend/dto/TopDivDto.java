@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public record TopDivDto(
         @JsonProperty("minDmg") int minDmg,
         @JsonProperty("maxDmg") int maxDmg,
+        @JsonProperty("armor") int armor,
         @JsonProperty("name")  String name,
         @JsonProperty("currEnergy") int currEnergy,
         @JsonProperty("maxEnergy") int maxEnergy,
