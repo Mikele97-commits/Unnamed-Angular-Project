@@ -71,7 +71,7 @@ public class InventoryService {
 
         }
 
-        public void addItem(String username, int templateId){
+        public String addItem(String username, int templateId){
             System.out.println("Username:"+username);
             System.out.println("Item ID:"+ templateId);
             User user = userRepository.findByUsername(username).orElse(null);
@@ -93,5 +93,6 @@ public class InventoryService {
             }
             player.getInventory().add(inventoryItem);
             userRepository.save(user);
+            return itemTemplate.getName()+" +0";
         }
 }

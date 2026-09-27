@@ -18,15 +18,17 @@ import java.util.Random;
 
 @Service
 public class FightService {
+    InventoryService inventoryService;
     MonsterRepository monsterRepository;
     UserRepository userRepository;
     PvMRepository pvMRepository;
     GameService gameService;
-    public FightService(GameService gameService, MonsterRepository monsterRepository, UserRepository userRepository,PvMRepository pvMRepository) {
+    public FightService(GameService gameService, MonsterRepository monsterRepository, UserRepository userRepository, PvMRepository pvMRepository, InventoryService inventoryService) {
         this.monsterRepository = monsterRepository;
         this.userRepository = userRepository;
         this.pvMRepository = pvMRepository;
         this.gameService = gameService;
+        this.inventoryService = inventoryService;
     }
     public Monster createMonster(String monsterName){
         Monster monster = new Monster();
@@ -107,6 +109,11 @@ public class FightService {
             player.setCurrentExp(player.getCurrentExp()+monster.getExpReward());
             fightResult.setExpGained(monster.getExpReward());
             fightResult.setGoldGained(monster.getGoldReward());
+            if(gameService.hasLoot()){
+                fightResult.setLoot(inventoryService.addItem(username,gameService.randomizeLoot(monster)));
+            }else {
+                fightResult.setLoot(null);
+            }
         }
         userRepository.save(user);
         pvMRepository.save(fightResult);

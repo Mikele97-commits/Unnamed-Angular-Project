@@ -147,6 +147,33 @@
   font-size: 0.95rem;
 }
 
+.player-level {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px 0;
+  padding: 6px 10px;
+  background: linear-gradient(to right, rgba(201, 162, 39, 0.15), rgba(201, 162, 39, 0.35), rgba(201, 162, 39, 0.15));
+  border: 1px solid #c9a227;
+  border-radius: 20px;
+}
+
+.level-label {
+  color: #d4c4a8;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.level-value {
+  color: #ffd700;
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-family: monospace;
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.4);
+}
+
 .inventory-item.equipped {
   background: rgba(40, 120, 60, 0.35);
   border-left: 4px solid #2ecc71;

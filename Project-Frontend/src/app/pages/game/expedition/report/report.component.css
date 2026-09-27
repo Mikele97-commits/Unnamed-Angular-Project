@@ -212,3 +212,43 @@
   color: #94a3b8;
   font-size: 1.1rem;
 }
+
+.loot-box {
+  margin-top: 20px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #fff7ed, #ffedd5);
+  border: 1px solid #fdba74;
+}
+
+.loot-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #c2410c;
+  margin-bottom: 6px;
+}
+
+.loot-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.loot-icon {
+  font-size: 1.1rem;
+}
+
+.loot-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #9a3412;
+}
+
+.loot-desc {
+  font-size: 0.85rem;
+  color: #9a3412;
+  opacity: 0.85;
+}

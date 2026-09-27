@@ -1,5 +1,6 @@
 export interface TopDivDto{
   name: string;
+  level: number;
 
   minDmg: number;
   maxDmg: number;

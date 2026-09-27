@@ -8,6 +8,7 @@ public record TopDivDto(
         @JsonProperty("maxDmg") int maxDmg,
         @JsonProperty("armor") int armor,
         @JsonProperty("name")  String name,
+        @JsonProperty("level") int level,
         @JsonProperty("currEnergy") int currEnergy,
         @JsonProperty("maxEnergy") int maxEnergy,
         @JsonProperty("currentHp") int currentHp,

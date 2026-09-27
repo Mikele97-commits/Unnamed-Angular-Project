@@ -24,6 +24,17 @@
         <span class="value gold">+{{ report.goldGained | number }}</span>
       </div>
     </div>
+
+    @if (report.loot) {
+      <div class="loot-box">
+        <div class="loot-label">Additional loot</div>
+        <div class="loot-item">
+          <span class="loot-icon">🎁</span>
+          <span class="loot-name">{{ report.loot }}</span>
+        </div>
+        <div class="loot-desc">You found something extra among the remains.</div>
+      </div>
+    }
   </div>
 
   <div class="log-section">

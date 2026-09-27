@@ -19,7 +19,7 @@ export class SewersComponent {
   private router=inject(Router)
   playerState=inject(PlayerStateService)
 
-
+  errorMessage: string | null = null;
   fightRat() : void{
     this.http.get<pvmReport>('api/expedition/Rat').subscribe({
       next: (dto:pvmReport)=>{
@@ -27,7 +27,7 @@ export class SewersComponent {
         this.router.navigate(['report'], {state:{report:dto}});
       },
       error: (err) => {
-        console.error('POST failed', err);
+        this.errorMessage = err.error;
       }
     })
   }

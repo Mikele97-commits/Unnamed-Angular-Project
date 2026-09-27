@@ -28,6 +28,8 @@ public class FightResult {
     private int goldGained;
     private String foughtAt;
 
+    private String loot;
+
     @JdbcTypeCode(SqlTypes.JSON)
     private List<FightLogEntry> log;
 }

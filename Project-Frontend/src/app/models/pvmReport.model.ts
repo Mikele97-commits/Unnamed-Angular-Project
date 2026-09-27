@@ -2,6 +2,7 @@ import {FightLogEntry} from './fightLogEntry.model';
 
 export interface pvmReport {
  id: number;
+ loot:string;
  username: string;
  monsterName: string;
  playerWon:boolean;

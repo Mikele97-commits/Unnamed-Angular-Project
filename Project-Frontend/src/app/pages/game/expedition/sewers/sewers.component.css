@@ -15,6 +15,15 @@
   color: #e0e0e0;
 }
 
+.error-box {
+  background: #4a1c1c;
+  color: #ffb3b3;
+  border: 1px solid #e74c3c;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
 .enemy-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.6),

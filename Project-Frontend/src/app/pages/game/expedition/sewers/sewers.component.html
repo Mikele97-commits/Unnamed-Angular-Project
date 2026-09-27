@@ -11,4 +11,9 @@
   <button class="action-btn" (click)="fightRat()">
     Attack
   </button>
+  @if (errorMessage !== null && errorMessage !== '') {
+    <div class="error-box">
+      {{ errorMessage }}
+    </div>
+  }
 </div>
