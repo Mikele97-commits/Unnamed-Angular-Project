@@ -18,4 +18,6 @@ export interface TopDivDto{
 
   questPoints: number;
   gold: number;
+
+  regenTime: Array<number>;
 }

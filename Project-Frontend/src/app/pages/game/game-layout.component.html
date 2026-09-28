@@ -13,6 +13,7 @@
       <span class="stat-values">{{topDivDto()?.currEnergy}}/{{topDivDto()?.maxEnergy}}</span>
     </div>
     <app-stat-bar [current]="topDivDto()?.currEnergy ?? 0" [max]="topDivDto()?.maxEnergy ?? 0" type="energy"></app-stat-bar>
+    <div class="regenCounter">{{topDivDto()?.regenTime[0]}}:{{topDivDto()?.regenTime[1]}}</div>
   </div>
 
   <div class="stat-group">

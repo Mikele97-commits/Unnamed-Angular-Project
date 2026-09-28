@@ -12,6 +12,8 @@ import org.example.projectbackend.repository.MonsterRepository;
 import org.example.projectbackend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -32,7 +34,9 @@ public class GameService {
         System.out.println("Taking data of player "+user.getUsername());
         int[] damages=calculateDmg(username);
         int armor=armor(username);
-        return new TopDivDto(damages[0],damages[1], armor, username, player.getLvl(), player.getCurrEnergy(), player.getMaxEnergy(), player.getCurrentHP(), player.getFinalHP(), player.getCurrentExp(), player.getNxtLvlExp(), player.getQuestPoints(), player.getGold());
+        int[] regenTime = calculateTimeToRegen();
+        System.out.println(Arrays.toString(regenTime));
+        return new TopDivDto(damages[0],damages[1], armor, username, player.getLvl(), player.getCurrEnergy(), player.getMaxEnergy(), player.getCurrentHP(), player.getFinalHP(), player.getCurrentExp(), player.getNxtLvlExp(), player.getQuestPoints(), player.getGold(), regenTime);
     }
 
     public int[] calculateMonsterDmg(String monsterName){
@@ -58,6 +62,23 @@ public class GameService {
         return new int[]{finalMin,finalMax};
     }
 
+    public int[] calculateTimeToRegen(){
+        LocalDateTime now = LocalDateTime.now();
+
+        int minute = now.getMinute();
+        int second = now.getSecond();
+
+        int nextTickMinute;
+        if (minute < 15) nextTickMinute = 15;
+        else if (minute < 30) nextTickMinute = 30;
+        else if (minute < 45) nextTickMinute = 45;
+        else nextTickMinute = 60; // means next hour :00
+
+        int minutesLeft = nextTickMinute - minute - 1;
+        int secondsLeft = 60 - second;
+
+        return new int[]{minutesLeft,secondsLeft};
+    }
     public int armor(String username){
         User user = userRepository.findByUsername(username).orElse(null);
         Player player = user.getPlayer();
