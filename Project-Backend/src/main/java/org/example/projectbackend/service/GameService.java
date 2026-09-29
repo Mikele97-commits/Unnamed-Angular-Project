@@ -72,10 +72,10 @@ public class GameService {
         if (minute < 15) nextTickMinute = 15;
         else if (minute < 30) nextTickMinute = 30;
         else if (minute < 45) nextTickMinute = 45;
-        else nextTickMinute = 60; // means next hour :00
+        else nextTickMinute = 60;
 
         int minutesLeft = nextTickMinute - minute - 1;
-        int secondsLeft = 60 - second;
+        int secondsLeft = 59 - second;
 
         return new int[]{minutesLeft,secondsLeft};
     }
