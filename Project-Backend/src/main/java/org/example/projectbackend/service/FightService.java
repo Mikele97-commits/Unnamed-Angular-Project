@@ -23,12 +23,14 @@ public class FightService {
     UserRepository userRepository;
     PvMRepository pvMRepository;
     GameService gameService;
-    public FightService(GameService gameService, MonsterRepository monsterRepository, UserRepository userRepository, PvMRepository pvMRepository, InventoryService inventoryService) {
+    PlayerService playerService;
+    public FightService(PlayerService playerService, GameService gameService, MonsterRepository monsterRepository, UserRepository userRepository, PvMRepository pvMRepository, InventoryService inventoryService) {
         this.monsterRepository = monsterRepository;
         this.userRepository = userRepository;
         this.pvMRepository = pvMRepository;
         this.gameService = gameService;
         this.inventoryService = inventoryService;
+        this.playerService = playerService;
     }
     public Monster createMonster(String monsterName){
         Monster monster = new Monster();
@@ -62,28 +64,20 @@ public class FightService {
 
     public FightResult createPvM(String username, String monsterName){
         FightResult fightResult = new FightResult();
-        fightResult.setUsername(username);
-        fightResult.setMonsterName(monsterName);
+        fightResult.setAttacker(username);
+        fightResult.setDefender(monsterName);
         fightResult.setFoughtAt(LocalDateTime.now().toString());
 
         User user = userRepository.findByUsername(username).orElse(null);
         Player player = user.getPlayer();
         Monster monster = createMonster(monsterName);
-        int playerPoints=0;
-        int monsterPoints=0;
-        List<Integer> pointsList = new ArrayList<>();
-        pointsList.add(playerPoints);
-        pointsList.add(monsterPoints);
-        double secondHitP=0;
-        double secondHitM=0;
-        List<Double> secondHitList=new ArrayList<>();
-        secondHitList.add(secondHitP);
-        secondHitList.add(secondHitM);
+        List<Integer> pointsList=initializePointsList();
+        List<Double> secondHitList=initializeSecondHitList();
         double secondHitPIncrease=((double)(player.getSpeed()-monster.getSpeed())/(double)monster.getSpeed());
         double secondHitMIncrease=((double)(monster.getSpeed()-player.getSpeed())/(double)player.getSpeed());
         List<FightLogEntry> logEntries = new ArrayList<>();
         for(int i=0; i<10;i++){
-            if(round(i+1,user,monster,secondHitList, logEntries, pointsList)){
+            if(round(i+1,player,monster,secondHitList, logEntries, pointsList)){
                 break;
             }
             secondHitList.set(0, secondHitList.get(0)+secondHitPIncrease);
@@ -120,8 +114,7 @@ public class FightService {
         return fightResult;
     }
 
-    public boolean round(int round, User user, Monster monster, List<Double> secondHitList, List<FightLogEntry> logEntries, List<Integer> pointsList){
-        Player player = user.getPlayer();
+    public boolean round(int round, Player player, Monster monster, List<Double> secondHitList, List<FightLogEntry> logEntries, List<Integer> pointsList){
         FightLogEntry fightLogEntry = new FightLogEntry();
         fightLogEntry.setRound(round);
         fightLogEntry.setActor(player.getUser().getUsername());
@@ -135,7 +128,7 @@ public class FightService {
         //Player starts with attack
         for(int i=1;i<=times;i++) {
             if (checkHit(player.getPerception(), monster.getDexterity(), player.getLvl() - monster.getLevel())) {
-                int[] damages=gameService.calculateDmg(user.getUsername());
+                int[] damages=playerService.calculateDmg(player);
                 int monsterArmor= monster.getArmor();
                 monster.setHp(monster.getHp() - calculateDmg(damages, monsterArmor));
                 pointsList.set(0, pointsList.get(0) + calculateDmg(damages, monsterArmor));
@@ -174,8 +167,8 @@ public class FightService {
         for(int i=1;i<=times;i++) {
             if (checkHit(monster.getPerception(), player.getDexterity(), monster.getLevel() - player.getLvl())) {
                 int[] damages = gameService.calculateMonsterDmg(monster.getName());
-                int playerArmor= gameService.armor(user.getUsername());
-                int finalDmg=calculateDmg(damages, monster.getArmor());
+                int playerArmor= gameService.armor(player);
+                int finalDmg=calculateDmg(damages, playerArmor);
                 player.setCurrentHP(player.getCurrentHP() - finalDmg);
                 pointsList.set(1, pointsList.get(1) + finalDmg);
                 if(i!=2) {
@@ -199,7 +192,7 @@ public class FightService {
         return player.getCurrentHP() <= 0;
     }
 
-    private boolean checkHit(int attackerPer, int defenderDex, int lvlDiff){
+    public boolean checkHit(int attackerPer, int defenderDex, int lvlDiff){
         double hitChance = 75.0;
         hitChance += attackerPer * 0.4;
         hitChance -= defenderDex * 0.4;
@@ -209,7 +202,21 @@ public class FightService {
         return roll < hitChance;
     }
 
-    private int calculateDmg(int[] minMax, int armor){
+    public boolean checkCrit(Player attacker, Player defender) {
+        double critChance = 5.0;
+
+        critChance += attacker.getLuck() * 0.3;
+        critChance -= defender.getLuck() * 0.1;
+
+
+
+        critChance = Math.max(1.0, Math.min(50.0, critChance));
+
+        double roll = Math.random() * 100;
+        return roll < critChance;
+    }
+
+    public int calculateDmg(int[] minMax, int armor){
         int min=minMax[0];
         int max=minMax[1];
 
@@ -217,6 +224,19 @@ public class FightService {
         int dmg= rand.nextInt((max-min)+1)+min;
         float finalDmg=(float)dmg*(100/(100+(float)armor));
         return (int)finalDmg;
+    }
+
+    public List<Double> initializeSecondHitList(){
+        List<Double> secondHitList=new ArrayList<>();
+        secondHitList.add(0.0);
+        secondHitList.add(0.0);
+        return secondHitList;
+    }
+    public List<Integer> initializePointsList(){
+        List<Integer> pointsList = new ArrayList<>();
+        pointsList.add(0);
+        pointsList.add(0);
+        return pointsList;
     }
 
 

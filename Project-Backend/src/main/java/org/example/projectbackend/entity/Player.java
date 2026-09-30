@@ -60,6 +60,9 @@ public class Player {
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
     private  List<Inventory> inventory = new ArrayList<>();
 
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL)
+    private List<FightResult> fightResults = new ArrayList<>();
+
 
 }
 

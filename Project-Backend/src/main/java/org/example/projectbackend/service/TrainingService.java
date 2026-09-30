@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class TrainingService {
     UserRepository userRepository;
+    PlayerService playerService;
 
-    public TrainingService(UserRepository userRepository) {
+    public TrainingService(UserRepository userRepository, PlayerService playerService) {
         this.userRepository = userRepository;
+        this.playerService = playerService;
     }
 
     public TrainingResponseDto getTrainingStats(String username) {
@@ -37,6 +39,7 @@ public class TrainingService {
                 break;
             case "endurance":
                 player.setEndurance(player.getEndurance() + 1);
+                playerService.maxHPRecalculation(player);
                 break;
             case "perception":
                 player.setPerception(player.getPerception() + 1);

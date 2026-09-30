@@ -6,6 +6,7 @@ import org.example.projectbackend.entity.User;
 import org.example.projectbackend.repository.UserRepository;
 import org.example.projectbackend.service.FightService;
 import org.example.projectbackend.service.GameService;
+import org.example.projectbackend.service.PlayerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -17,10 +18,12 @@ public class PvMController {
     private final GameService gameService;
     UserRepository userRepository;
     FightService fightService;
-    public PvMController(UserRepository userRepository, FightService fightService, GameService gameService) {
+    PlayerService playerService;
+    public PvMController(PlayerService playerService, UserRepository userRepository, FightService fightService, GameService gameService) {
         this.userRepository = userRepository;
         this.fightService = fightService;
         this.gameService = gameService;
+        this.playerService = playerService;
     }
 
     @GetMapping("/{monsterName}")
@@ -33,7 +36,7 @@ public class PvMController {
             System.out.println("Monster name: " + monsterName + "\nusername: " + username);
             FightResult fightResult = fightService.createPvM(username, monsterName);
             System.out.println("fightResult: " + fightResult.toString());
-            gameService.lvlUp(username);
+            playerService.lvlUp(username);
             return ResponseEntity.ok(fightResult);
         }else {
             return ResponseEntity.badRequest().body("No quest points!");

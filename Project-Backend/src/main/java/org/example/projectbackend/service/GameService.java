@@ -22,18 +22,21 @@ public class GameService {
     UserRepository userRepository;
     MonsterRepository monsterRepository;
     ItemTemplateRepository itemTemplateRepository;
-    public GameService(ItemTemplateRepository itemTemplateRepository, MonsterRepository monsterRepository, UserRepository userRepository) {
+    PlayerService playerService;
+
+    public GameService(PlayerService playerService, ItemTemplateRepository itemTemplateRepository, MonsterRepository monsterRepository, UserRepository userRepository) {
         this.userRepository = userRepository;
         this.monsterRepository = monsterRepository;
         this.itemTemplateRepository = itemTemplateRepository;
+        this.playerService = playerService;
     }
 
     public TopDivDto giveTopDto(String username){
         User user = userRepository.findByUsername(username).orElse(null);
         Player player = user.getPlayer();
         System.out.println("Taking data of player "+user.getUsername());
-        int[] damages=calculateDmg(username);
-        int armor=armor(username);
+        int[] damages=playerService.calculateDmg(player);
+        int armor=armor(player);
         int[] regenTime = calculateTimeToRegen();
         System.out.println(Arrays.toString(regenTime));
         return new TopDivDto(damages[0],damages[1], armor, username, player.getLvl(), player.getCurrEnergy(), player.getMaxEnergy(), player.getCurrentHP(), player.getFinalHP(), player.getCurrentExp(), player.getNxtLvlExp(), player.getQuestPoints(), player.getGold(), regenTime);
@@ -44,22 +47,6 @@ public class GameService {
        int minDmg=monster.getMinDamage() + monster.getStrength()/5;
        int maxDmg=monster.getMaxDamage() + monster.getStrength()/5;
        return new int[]{minDmg,maxDmg};
-    }
-    public int[] calculateDmg(String username){
-        User user = userRepository.findByUsername(username).orElse(null);
-        Player player = user.getPlayer();
-        int min;
-        int max;
-        if(player.getEquippedWeapon()!=null){
-             min=player.getEquippedWeapon().getFinalMinDmg();
-             max=player.getEquippedWeapon().getFinalMaxDmg();
-        }else{
-            min=0;
-            max=0;
-        }
-        int finalMin=player.getBaseDmg()+min+ player.getStrength()/5;
-        int finalMax=player.getBaseDmg()+max+ player.getStrength()/5;
-        return new int[]{finalMin,finalMax};
     }
 
     public int[] calculateTimeToRegen(){
@@ -79,9 +66,7 @@ public class GameService {
 
         return new int[]{minutesLeft,secondsLeft};
     }
-    public int armor(String username){
-        User user = userRepository.findByUsername(username).orElse(null);
-        Player player = user.getPlayer();
+    public int armor(Player player){
         int baseArmor=5*player.getLvl();
         if(player.getEquippedArmor()==null){
             return baseArmor;
@@ -89,18 +74,7 @@ public class GameService {
         return baseArmor+player.getEquippedArmor().getFinalArmor();
     }
 
-    public boolean lvlUp(String username){
-        User user = userRepository.findByUsername(username).orElse(null);
-        Player player = user.getPlayer();
-        if(player.getCurrentExp()>=player.getNxtLvlExp()){
-            player.setLvl(player.getLvl()+1);
-            player.setCurrentExp(0);
-            player.setNxtLvlExp((int) (100 * player.getLvl() * Math.pow(1.2, player.getLvl()) - 1));
-            userRepository.save(user);
-            return true;
-        }
-        return false;
-    }
+
 
     public boolean hasLoot() {
         int rand = new Random().nextInt(100);

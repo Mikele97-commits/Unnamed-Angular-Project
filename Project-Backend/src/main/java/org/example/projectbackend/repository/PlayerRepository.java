@@ -13,4 +13,6 @@ public interface PlayerRepository extends JpaRepository<Player, Integer> {
 
     @Query("SELECT p FROM Player p WHERE p.currEnergy<p.maxEnergy")
     List<Player> findNoFullEnergyPlayers();
+
+    List<Player> findAllByQuestPointsLessThan(int i);
 }
