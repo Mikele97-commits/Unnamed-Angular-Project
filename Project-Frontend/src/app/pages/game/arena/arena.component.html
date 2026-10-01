@@ -1,0 +1,25 @@
+<div class="player-search">
+  <div class="search-bar">
+    <input type="text" placeholder="Search player..." class="search-input">
+  </div>
+
+  <div class="players-table">
+    <div class="table-header">
+      <span>Name</span>
+      <span>Level</span>
+      <button class="search-btn" (click)="findEnemies()">Search</button>
+    </div>
+
+    <!-- up to 4 rows -->
+    @for (enemy of enemies; track enemy.username){
+      <div class="table-row">
+        <span class="player-name">{{ enemy.username }}</span>
+        <span class="player-level">{{enemy.lvl}}</span>
+        <button class="challenge-btn" (click)="attack(enemy.username)">Challenge</button>
+      </div>
+    } @empty {
+      <li>Nobody found</li>
+    }
+
+  </div>
+</div>

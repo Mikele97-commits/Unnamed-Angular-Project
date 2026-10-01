@@ -9,6 +9,7 @@ import {AdminComponent} from './pages/game/admin/admin.component';
 import {ExpeditionComponent} from './pages/game/expedition/expedition.component';
 import {SewersComponent} from './pages/game/expedition/sewers/sewers.component';
 import {ReportComponent} from './pages/game/expedition/report/report.component';
+import {ArenaComponent} from './pages/game/arena/arena.component';
 
 export const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -24,6 +25,7 @@ export const routes: Routes = [
       { path: 'training', component: TrainingComponent},
       { path: 'admin', component: AdminComponent},
       { path: 'report', component: ReportComponent},
+      { path: 'arena', component: ArenaComponent},
       {
         path: 'expedition',
         children: [

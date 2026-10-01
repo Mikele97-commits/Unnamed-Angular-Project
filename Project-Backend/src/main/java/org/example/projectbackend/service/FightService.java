@@ -109,8 +109,8 @@ public class FightService {
                 fightResult.setLoot(null);
             }
         }
+        fightResult.setPlayer(player);
         userRepository.save(user);
-        pvMRepository.save(fightResult);
         return fightResult;
     }
 
@@ -237,6 +237,18 @@ public class FightService {
         pointsList.add(0);
         pointsList.add(0);
         return pointsList;
+    }
+    public FightResult setResult(FightResult fightResult, Player winner, Player loser){
+        fightResult.setPlayerWon(true);
+        winner.getFightResults().add(fightResult);
+        FightResult loseResult = new FightResult();
+        BeanUtils.copyProperties(fightResult,loseResult);
+        loseResult.setPlayerWon(false);
+        loseResult.setId(null);
+        loser.getFightResults().add(loseResult);
+        fightResult.setPlayer(winner);
+        loseResult.setPlayer(loser);
+        return loseResult;
     }
 
 

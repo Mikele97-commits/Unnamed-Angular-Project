@@ -1,0 +1,84 @@
+.player-search {
+  max-width: 520px;
+  background: #2a2115;
+  border: 1px solid #c9a227;
+  border-radius: 10px;
+  padding: 16px;
+  color: #f5e6c8;
+  font-family: system-ui, sans-serif;
+}
+
+.search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #c9a227;
+  background: #1a150f;
+  color: #f5e6c8;
+}
+
+.search-btn,
+.challenge-btn {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid #c9a227;
+  background: #c9a227;
+  color: #1a150f;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.search-btn:hover,
+.challenge-btn:hover {
+  background: #e0b93d;
+}
+
+.players-table {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #c9a227;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table-header,
+.table-row {
+  display: grid;
+  grid-template-columns: 1fr 80px 120px;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+}
+
+.table-header {
+  background: #3a2f1e;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #d4c4a8;
+}
+
+.table-row {
+  background: #1a150f;
+  border-top: 1px solid #c9a227;
+}
+
+.table-row:hover {
+  background: #3a2f1e;
+}
+
+.player-name {
+  color: #ffd700;
+  font-weight: 600;
+}
+
+.player-level {
+  text-align: center;
+  font-family: monospace;
+}

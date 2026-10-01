@@ -28,9 +28,10 @@ public class PvPService {
         this.playerService = playerService;
     }
 
-    public void createPVP(String attackerUsername, String defenderUsername){
+    public FightResult createPVP(String attackerUsername, String defenderUsername){
         User user1=userRepository.findByUsername(attackerUsername).orElse(null);
         User user2=userRepository.findByUsername(defenderUsername).orElse(null);
+        System.out.println("Searching for user " + defenderUsername);
         Player attacker= user1.getPlayer();
         Player defender= user2.getPlayer();
 
@@ -49,23 +50,54 @@ public class PvPService {
 
 
 
+        Player winner=null;
+        boolean attackerLost=false;
         for(int i=1; i<=20;i++){
-            Player winner=round(attackerUsername,defenderUsername,i, attacker,defender,pointsList, secondHitList, logEntries);
+            winner=round(attackerUsername,defenderUsername,i, attacker,defender,pointsList, secondHitList, logEntries);
             if(winner!=null){
+                fightResult.setLog(logEntries);
                 fightResult.setPlayerWon(true);
                 winner.getFightResults().add(fightResult);
                 FightResult loseResult = new FightResult();
                 BeanUtils.copyProperties(fightResult,loseResult);
                 loseResult.setPlayerWon(false);
+                fightResult.setPlayer(winner);
                 if(winner==attacker){
                     defender.getFightResults().add(loseResult);
+                    loseResult.setPlayer(defender);
                 }else{
                     attacker.getFightResults().add(loseResult);
+                    loseResult.setPlayer(attacker);
+                    attackerLost=true;
                 }
+                break;
             }
             secondHitList.set(0, secondHitList.get(0)+secondHitAIncrease);
             secondHitList.set(1, secondHitList.get(1)+secondHitDIncrease);
         }
+        //If nobody died counting points decide winner
+        FightResult loserResult= null;
+        if (winner==null){
+            fightResult.setLog(logEntries);
+            if(pointsList.get(0)>pointsList.get(1)){
+               fightService.setResult(fightResult, attacker, defender);
+            } else if (pointsList.get(1) > pointsList.get(0)) {
+                attackerLost=true;
+                loserResult=fightService.setResult(fightResult, defender, attacker);
+            }else{
+                //If tied, player won stays null
+                FightResult tieResult=new FightResult();
+                BeanUtils.copyProperties(fightResult,tieResult);
+                fightResult.setPlayer(attacker);
+                tieResult.setPlayer(defender);
+                tieResult.setId(null);
+                attacker.getFightResults().add(fightResult);
+                defender.getFightResults().add(tieResult);
+            }
+        }
+        playerRepository.save(attacker);
+        playerRepository.save(defender);
+        return attackerLost?loserResult:fightResult;
     }
 
     public Player round(String attackerUsername, String defenderUsername, int round, Player attacker, Player defender, List<Integer> pointsList, List<Double> secondHitList, List<FightLogEntry> logEntries){

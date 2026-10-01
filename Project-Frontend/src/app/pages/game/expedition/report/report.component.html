@@ -3,13 +3,13 @@
   <div class="report-header" [class.win]="report.playerWon" [class.lose]="!report.playerWon">
     <div class="header-top">
       <div class="title">
-        <h1>{{ report.username }} vs {{ report.monsterName }}</h1>
+        <h1>{{ report.attacker }} vs {{ report.defender }}</h1>
         <span class="badge" [class.win-badge]="report.playerWon" [class.lose-badge]="!report.playerWon">
           {{ report.playerWon ? 'VICTORY' : 'DEFEAT' }}
         </span>
       </div>
       <div class="meta">
-        <span>{{ report.localDateTime | date:'medium' }}</span>
+        <span>{{ report.foughtAt | date:'medium' }}</span>
         <span class="id">#{{ report.id }}</span>
       </div>
     </div>

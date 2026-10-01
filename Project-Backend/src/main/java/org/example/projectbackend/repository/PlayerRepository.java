@@ -1,5 +1,6 @@
 package org.example.projectbackend.repository;
 
+import org.example.projectbackend.dto.ProfileDto;
 import org.example.projectbackend.entity.Player;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,4 +16,6 @@ public interface PlayerRepository extends JpaRepository<Player, Integer> {
     List<Player> findNoFullEnergyPlayers();
 
     List<Player> findAllByQuestPointsLessThan(int i);
+
+    List<Player> findAllByLvlBetween(int lvlAfter, int lvlBefore);
 }

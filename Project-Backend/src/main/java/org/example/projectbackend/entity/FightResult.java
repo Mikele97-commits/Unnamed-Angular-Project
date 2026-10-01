@@ -1,5 +1,6 @@
 package org.example.projectbackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,6 +31,7 @@ public class FightResult {
     private List<FightLogEntry> log;
 
     @ManyToOne
-    @JoinColumn(name="fightResult_id")
+    @JsonIgnore
+    @JoinColumn(name="player_id")
     Player player;
 }

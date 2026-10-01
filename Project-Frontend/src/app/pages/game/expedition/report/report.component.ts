@@ -20,7 +20,6 @@ export class ReportComponent implements OnInit {
 
   report:pvmReport | null = null;
   constructor(private router: Router) {
-    // Best place to read navigation state (works reliably)
     const navigation = this.router.currentNavigation();
     this.report = navigation?.extras?.state?.['report'] as pvmReport;
   }

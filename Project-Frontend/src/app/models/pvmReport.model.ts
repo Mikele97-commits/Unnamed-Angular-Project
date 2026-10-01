@@ -2,13 +2,14 @@ import {FightLogEntry} from './fightLogEntry.model';
 
 export interface pvmReport {
  id: number;
- loot:string;
- username: string;
- monsterName: string;
+ attacker: string;
+ defender: string;
  playerWon:boolean;
  expGained: number;
  goldGained: number;
- localDateTime: string;
+ foughtAt: string;
+ loot:string;
 
- log:Array<FightLogEntry>;
+
+  log:Array<FightLogEntry>;
 }
