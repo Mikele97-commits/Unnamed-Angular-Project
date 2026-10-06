@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface ItemTemplateRepository extends JpaRepository<ItemTemplate, Integer> {
     List<ItemTemplate> findByLvlBetween(int minLvl, int maxLvl);
+
+    ItemTemplate getItemTemplateById(Long id);
 }
 

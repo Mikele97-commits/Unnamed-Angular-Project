@@ -10,4 +10,6 @@ public interface InventoryRepository extends JpaRepository<Inventory,Integer> {
     Optional<Inventory> findByPlayerAndTypeAndEquippedTrue(Player player, String type);
 
     Inventory[] findByLvl(int lvl);
+
+    Inventory getInventoryById(Long id);
 }

@@ -34,7 +34,6 @@ public class GameService {
     public TopDivDto giveTopDto(String username){
         User user = userRepository.findByUsername(username).orElse(null);
         Player player = user.getPlayer();
-        System.out.println("Taking data of player "+user.getUsername());
         int[] damages=playerService.calculateDmg(player);
         int armor=armor(player);
         int[] regenTime = calculateTimeToRegen();

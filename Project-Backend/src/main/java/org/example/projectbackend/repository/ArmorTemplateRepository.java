@@ -5,4 +5,5 @@ import org.example.projectbackend.entity.items.Weapon;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ArmorTemplateRepository extends JpaRepository<Armor, Integer> {
+    Armor getArmorById(Long id);
 }

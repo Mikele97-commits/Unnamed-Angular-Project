@@ -25,6 +25,9 @@ public class PlayerService {
         public void regenerate() {
             //HP regeneration
             List<Player> injuredPlayers = playerRepository.findInjuredPlayers();
+            if(injuredPlayers.isEmpty()){
+                return;
+            }
             for (Player p : injuredPlayers) {
                 p.setCurrentHP(Math.min(p.getFinalHP(), p.getCurrentHP() + (int)(p.getFinalHP() *0.1)));
             }

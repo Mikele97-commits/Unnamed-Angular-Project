@@ -1,7 +1,7 @@
 import {ItemModel} from './item.model';
 
 export interface WeaponModel extends ItemModel{
-  minDmg:number;
-  maxDmg:number;
+  finalMinDmg:number;
+  finalMaxDmg:number;
   plus:number;
 }

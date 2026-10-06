@@ -2,10 +2,10 @@ import {Component, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {AuthService} from '../../../core/auth/auth.service';
 import {HttpClient} from '@angular/common/http';
-import {ItemModel} from '../../../models/item.model';
 import {TrainingResponseDto} from '../../../models/trainingResponse.model';
 import {TrainingStatsDto} from '../../../models/TrainingStats.model';
 import {PlayerStateService} from '../../../core/services/player-state.service';
+import {InventoryService} from '../../../core/services/inventory-service';
 
 
 @Component({
@@ -17,8 +17,9 @@ import {PlayerStateService} from '../../../core/services/player-state.service';
 
 export class MenuComponent implements OnInit {
   authService=inject(AuthService);
-  private http = inject(HttpClient);
+  http = inject(HttpClient);
   playerState = inject(PlayerStateService);
+  inventoryService= inject(InventoryService);
 
 
   logout(){
@@ -28,8 +29,7 @@ export class MenuComponent implements OnInit {
   equipItem(itemId:number){
     this.http.post('/api/inventory/equipItem',itemId).subscribe(
       {
-        next:(data) => {
-          console.log(data);
+        next:() => {
           this.refresh();
         }
       }
@@ -47,7 +47,7 @@ export class MenuComponent implements OnInit {
     )
   }
 
-  items = signal<any[]>([]);  expandedId: number | null = null;
+  expandedId: number | null = null;
   toggleItem(id: number) {
     this.expandedId = this.expandedId === id ? null : id;
   }
@@ -63,13 +63,7 @@ export class MenuComponent implements OnInit {
     this.loadInventory()
   }
   loadInventory() {
-    this.http.get<Array<ItemModel>>('/api/inventory/get').subscribe(
-      {
-        next: (data) => {
-          this.items.set(data)
-        }
-      }
-    );
+    this.inventoryService.loadInventory()
   }
 
   loadStats(){

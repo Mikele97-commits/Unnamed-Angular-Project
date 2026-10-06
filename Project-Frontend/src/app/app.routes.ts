@@ -10,6 +10,7 @@ import {ExpeditionComponent} from './pages/game/expedition/expedition.component'
 import {SewersComponent} from './pages/game/expedition/sewers/sewers.component';
 import {ReportComponent} from './pages/game/expedition/report/report.component';
 import {ArenaComponent} from './pages/game/arena/arena.component';
+import {ForgeComponent} from './pages/game/forge/forge.component';
 
 export const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -26,6 +27,7 @@ export const routes: Routes = [
       { path: 'admin', component: AdminComponent},
       { path: 'report', component: ReportComponent},
       { path: 'arena', component: ArenaComponent},
+      { path: 'forge', component: ForgeComponent},
       {
         path: 'expedition',
         children: [

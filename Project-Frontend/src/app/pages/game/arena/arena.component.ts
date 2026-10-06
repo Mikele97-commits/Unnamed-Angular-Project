@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
@@ -22,13 +22,14 @@ export class ArenaComponent{
 
   topDivDto=this.playerState.topDivDto;
 
-  enemies:profileDto[]=[]
+  enemies=signal<profileDto[]>([]);
   findEnemies(){
 
     const lvl = this.topDivDto()?.level;
     this.http.get <profileDto[]>(`api/arena/find/${lvl}`).subscribe({
       next: (data) => {
-        this.enemies=data;
+        console.log(data);
+        this.enemies.set(data);
       }
 
     })

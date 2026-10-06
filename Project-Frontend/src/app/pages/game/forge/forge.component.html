@@ -1,0 +1,68 @@
+<div class="inventory-container">
+  <div class="inventory-list">
+    @for (item of inventoryService.items(); track item.id){
+      <div class="inventory-item" [class.expanded]="expandedId === item.id" [class.equipped]="item.equipped">
+
+        <!-- Always visible summary -->
+        <div class="item-summary" (click)="toggleItem(item.id)">
+          <span class="item-name">{{ item.name }}+{{ item.finalPlus }}</span>
+          <span class="item-type">{{ item.type }}</span>
+          <span class="item-lvl">Lvl {{ item.lvl }}</span>
+          <span class="item-price">{{ item.price }} gold</span>
+          <span class="expand-icon">{{ expandedId === item.id ? '▲' : '▼' }}</span>
+          <button (click)="getForgingInfo(item.id)">Put in forge</button>
+        </div>
+
+        @if (expandedId === item.id) {
+          <div class="item-details">
+            @if (item.type === 'weapon') {
+              <div>Damage: {{ item.finalMinDmg }} - {{ item.finalMaxDmg }}</div>
+            }
+            @if (item.type === 'armor') {
+              <div>Armor: {{ item.finalArmor }}</div>
+            }
+          </div>
+        }
+
+      </div>
+    }
+  </div>
+</div>
+
+<div class="forge-panel">
+  <div class="forge-header">
+    <h3>Forge Preview</h3>
+  </div>
+
+  <div class="forge-type">
+    <div><strong>{{ forgingInfo()?.name ?? '-' }}+{{ forgingInfo()?.finalPlus ?? 0 }}</strong></div>
+  </div>
+
+  <div class="forge-stats">
+    @if (!forgingInfo() || forgingInfo()?.type === 'weapon') {
+      <div class="stat-line">
+        <span>Damage after forge</span>
+        <span class="stat-value">
+          {{ forgingInfo()?.minDmg ?? '-' }} - {{ forgingInfo()?.maxDmg ?? '-' }}
+        </span>
+      </div>
+    }
+
+    @if (!forgingInfo() || forgingInfo()?.type === 'armor') {
+      <div class="stat-line">
+        <span>Armor after forge</span>
+        <span class="stat-value">{{ forgingInfo()?.armor ?? '-' }}</span>
+      </div>
+    }
+
+    <div class="stat-line cost">
+      <span>Cost</span>
+      <span class="stat-value">{{ forgingInfo()?.cost ?? '-' }} gold</span>
+    </div>
+  </div>
+
+  <button class="upgrade-btn" (click)="upgrade(upgradeId()!)" [disabled]="!forgingInfo()">
+    Upgrade
+  </button>
+</div>
+

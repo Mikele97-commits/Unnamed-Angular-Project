@@ -17,5 +17,5 @@ public interface PlayerRepository extends JpaRepository<Player, Integer> {
 
     List<Player> findAllByQuestPointsLessThan(int i);
 
-    List<Player> findAllByLvlBetween(int lvlAfter, int lvlBefore);
+    List<Player> findAllByLvlBetweenAndIdNot(int lvlAfter, int lvlBefore, Long id);
 }

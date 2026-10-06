@@ -18,8 +18,8 @@ public class ArenaController {
     }
 
     @GetMapping("/find/{lvl}")
-    public List<ProfileDto> findEnemies(@PathVariable("lvl") int lvl){
-        return arenaService.findEnemies(lvl);
+    public List<ProfileDto> findEnemies(@AuthenticationPrincipal String username, @PathVariable("lvl") int lvl){
+        return arenaService.findEnemies(lvl, username);
     }
 
     @PostMapping("/attack")

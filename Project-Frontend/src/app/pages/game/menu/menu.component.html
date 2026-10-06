@@ -55,7 +55,7 @@
 
 <div class="inventory-container">
   <div class="inventory-list">
-    @for (item of items(); track item.id){
+    @for (item of inventoryService.items(); track item.id){
       <div class="inventory-item" [class.expanded]="expandedId === item.id" [class.equipped]="item.equipped">
 
               <!-- Always visible summary -->
@@ -72,7 +72,6 @@
                 }
               </div>
 
-              <!-- Expanded details -->
               @if (expandedId === item.id) {
                 <div class="item-details">
                   @if (item.type === 'weapon') {
