@@ -1,16 +1,69 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <h1>Register</h1>
 
-<div>
-<h1>Register</h1>
-<form #registerForm="ngForm" (ngSubmit)="userRegister(registerForm)">
-  <input ngModel required type="text" name="username"  placeholder="Username" >
-  <input [type]="showPassword ? 'text' : 'password'" name="password" ngModel required placeholder="Password">
-  <input ngModel email required type="email" name="email"  placeholder="E-mail" #email="ngModel">
-  @if (email.invalid && email.touched) {
-    <div>Invalid email format</div>
-  }
-  <input type="submit" value="Submit">
-  <input type="checkbox" (change)="togglePassword()">Show password
-  <a href="">Already have an account? Login here</a>
-</form>
+    <form #registerForm="ngForm" (ngSubmit)="userRegister(registerForm)">
+      <input
+        ngModel
+        required
+        type="text"
+        name="username"
+        placeholder="Username"
+        class="auth-input"
+      >
+      @if (usernameExists()) {
+        <div class="input-hint">
+          {{ usernameExists() }}
+        </div>
+      }
+
+      <input
+        [type]="showPassword ? 'text' : 'password'"
+        name="password"
+        ngModel
+        required
+        placeholder="Password"
+        class="auth-input"
+      >
+
+      @if (passwordError()) {
+        <div class="input-hint">
+          {{ passwordError() }}
+        </div>
+      }
+
+      <input
+        ngModel
+        required
+        email
+        type="email"
+        name="email"
+        placeholder="E-mail"
+        class="auth-input"
+      >
+
+      @if (emailExists()) {
+        <div class="auth-error">{{emailExists()}}</div>
+      }
+
+      <label class="show-password">
+        <input type="checkbox" (change)="togglePassword()">
+        Show password
+      </label>
+
+      <button type="submit" class="auth-btn" [disabled]="registerForm.invalid">
+        Submit
+      </button>
+
+      @if (registerSuccessful()) {
+        <div class="success">
+          {{ registerSuccessful() }}
+        </div>
+      }
+    </form>
+
+    <a routerLink="/login" class="auth-link">
+      Already have an account? Login here
+    </a>
+  </div>
 </div>
-

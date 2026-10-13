@@ -26,7 +26,7 @@ public class UserService {
 
     public AnswerDto addUser(User user){
         if(!authService.passwordValid(user.getPassword())){
-            return new AnswerDto("Invalid password", false);
+            return new AnswerDto("Invalid password. It should contain at least one smallercase letter, one uppercase letter, a number and a special sign.", false);
         }
         if(userRepository.existsByUsername(user.getUsername())){
             return new AnswerDto("Username already exists", false);
@@ -37,7 +37,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         System.out.println("User added successfully");
-        return new AnswerDto("User has been registered", true);
+        return new AnswerDto("User registered successfully", true);
     }
 
     public User createUser(String username, String password, String email){

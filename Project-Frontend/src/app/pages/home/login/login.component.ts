@@ -3,13 +3,13 @@ import {HttpClient} from '@angular/common/http';
 import {FormsModule} from '@angular/forms';
 import {LoginDto} from '../../../models/login.model';
 import {AnswerDto} from '../../../models/answer.model';
-import {Router} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../../../core/auth/auth.service';
 
 
 @Component({
   selector: 'home-login',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: 'login.component.html',
   styleUrl: 'login.component.css'
 })

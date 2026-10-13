@@ -1,12 +1,42 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <h1>Login</h1>
 
-<div>
-<h1>Login</h1>
-<form #loginForm="ngForm" (ngSubmit)="userLogin(loginForm)">
-  <input ngModel required type="text" name="username"  placeholder="Username" >
-  <input [type]="showPassword ? 'text' : 'password'" name="password" ngModel required placeholder="Password">
-  <input type="submit" value="Submit">
-  <input type="checkbox" (change)="togglePassword()">Show password
-  <pre>{{loginError}}</pre>
-  <a href="register">Don't have account? Register now!</a>
-</form>
+    <form #loginForm="ngForm" (ngSubmit)="userLogin(loginForm)">
+      <input
+        ngModel
+        required
+        type="text"
+        name="username"
+        placeholder="Username"
+        class="auth-input"
+      >
+
+      <input
+        ngModel
+        required
+        [type]="showPassword ? 'text' : 'password'"
+        name="password"
+        placeholder="Password"
+        class="auth-input"
+      >
+
+      <label class="show-password">
+        <input type="checkbox" (change)="togglePassword()">
+        Show password
+      </label>
+
+      <button type="submit" class="auth-btn" [disabled]="loginForm.invalid">
+        Submit
+      </button>
+
+      @if (loginError) {
+        <div class="auth-error">{{ loginError }}</div>
+      }
+    </form>
+
+    <a routerLink="/register" class="auth-link">
+      Don't have an account? Register now!
+    </a>
+  </div>
 </div>
