@@ -1,32 +1,62 @@
+<div class="page training-page">
+  <div class="training-panel">
+    <h1 class="training-title">TRAINING GROUNDS</h1>
+    <p class="training-subtitle">Spend energy to harden your body and mind</p>
 
-<h1>TRAINING</h1>
-<div>
-  <div>Strength</div>
-  <div>{{trainingDto()?.strength}}</div>
-  <button (click)="addTraining('strength')" >+</button>
-</div>
-<div>
-  <div>Endurance</div>
-  <div>{{trainingDto()?.endurance}}</div>
-  <button (click)="addTraining('endurance')" >+</button>
-</div>
-<div>
-  <div>Perception</div>
-  <div>{{trainingDto()?.perception}}</div>
-  <button (click)="addTraining('perception')" >+</button>
-</div>
-<div>
-  <div>Speed</div>
-  <div>{{trainingDto()?.speed}}</div>
-  <button (click)="addTraining('speed')" >+</button>
-</div>
-<div>
-  <div>Dexterity</div>
-  <div>{{trainingDto()?.dexterity}}</div>
-  <button (click)="addTraining('dexterity')" >+</button>
-</div>
-<div>
-  <div>Luck</div>
-  <div>{{trainingDto()?.luck}}</div>
-  <button (click)="addTraining('luck')" >+</button>
+    <div class="training-list">
+      <div class="training-row">
+        <div class="stat-info">
+          <span class="stat-name">Strength</span>
+          <span class="stat-desc">Increases your base damage</span>
+        </div>
+        <div class="stat-value">{{ trainingDto()?.strength }}</div>
+        <button class="train-btn" (click)="addTraining('strength')">+</button>
+      </div>
+
+      <div class="training-row">
+        <div class="stat-info">
+          <span class="stat-name">Endurance</span>
+          <span class="stat-desc">Increases your maximal HP</span>
+        </div>
+        <div class="stat-value">{{ trainingDto()?.endurance }}</div>
+        <button class="train-btn" (click)="addTraining('endurance')">+</button>
+      </div>
+
+      <div class="training-row">
+        <div class="stat-info">
+          <span class="stat-name">Perception</span>
+          <span class="stat-desc">Increases your chance to hit an opponent</span>
+        </div>
+        <div class="stat-value">{{ trainingDto()?.perception }}</div>
+        <button class="train-btn" (click)="addTraining('perception')">+</button>
+      </div>
+
+      <div class="training-row">
+        <div class="stat-info">
+          <span class="stat-name">Speed</span>
+          <span class="stat-desc">Increases your double hit chance</span>
+        </div>
+        <div class="stat-value">{{ trainingDto()?.speed }}</div>
+        <button class="train-btn" (click)="addTraining('speed')">+</button>
+      </div>
+
+      <div class="training-row">
+        <div class="stat-info">
+          <span class="stat-name">Dexterity</span>
+          <span class="stat-desc">Makes you harder to hit</span>
+        </div>
+        <div class="stat-value">{{ trainingDto()?.dexterity }}</div>
+        <button class="train-btn" (click)="addTraining('dexterity')">+</button>
+      </div>
+
+      <div class="training-row">
+        <div class="stat-info">
+          <span class="stat-name">Luck</span>
+          <span class="stat-desc">Increases your critical hit chance</span>
+        </div>
+        <div class="stat-value">{{ trainingDto()?.luck }}</div>
+        <button class="train-btn" (click)="addTraining('luck')">+</button>
+      </div>
+    </div>
+  </div>
 </div>

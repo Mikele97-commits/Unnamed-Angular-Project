@@ -1,3 +1,7 @@
+.forge-page{
+  display: flex;
+  flex-direction: row;
+}
 .inventory-container {
   height: 360px;          /* fixed height – change as you like */
   overflow-y: auto;       /* enables scrolling */

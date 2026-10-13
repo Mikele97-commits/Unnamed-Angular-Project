@@ -9,6 +9,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
+
 /* Name */
 .player-name {
   text-align: center;
@@ -182,3 +183,19 @@
 .inventory-item.equipped .item-name {
   color: #2ecc71;
 }
+
+.logout-btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #c9a227;
+  background: rgba(0, 0, 0, 0.35);
+  color: #f5e6c8;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: #c9a227;
+  color: #1a150f;
+}
+

@@ -1,8 +1,4 @@
-
-
-<h1>MENU</h1>
-<a href="training">Training</a>
-<button (click)="logout()">Logout</button>
+<div class="page menu-page">
 
 <div class="menuContent">
   <div class="character-panel">
@@ -10,9 +6,11 @@
     <div class="player-name">
       {{playerState.topDivDto()?.name}}
     </div>
+    <button class="logout-btn" (click)="logout()">Logout</button>
 
     <!-- Avatar / Logo -->
     <div class="player-avatar">
+
     </div>
 
     <div class="player-level">
@@ -87,4 +85,5 @@
             }
     </div>
   </div>
+</div>
 </div>

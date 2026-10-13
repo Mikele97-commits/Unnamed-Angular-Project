@@ -36,6 +36,7 @@ public class PvPService {
         Player defender= user2.getPlayer();
 
         FightResult fightResult = new FightResult();
+        FightResult loseResult = new FightResult();
         fightResult.setAttacker(attackerUsername);
         fightResult.setDefender(defenderUsername);
         fightResult.setFoughtAt(LocalDateTime.now().toString());
@@ -58,11 +59,11 @@ public class PvPService {
                 fightResult.setLog(logEntries);
                 fightResult.setPlayerWon(true);
                 winner.getFightResults().add(fightResult);
-                FightResult loseResult = new FightResult();
                 BeanUtils.copyProperties(fightResult,loseResult);
                 loseResult.setPlayerWon(false);
                 fightResult.setPlayer(winner);
                 if(winner==attacker){
+                    fightResult.setGoldGained(robDefender(attacker, defender));
                     defender.getFightResults().add(loseResult);
                     loseResult.setPlayer(defender);
                 }else{
@@ -76,14 +77,14 @@ public class PvPService {
             secondHitList.set(1, secondHitList.get(1)+secondHitDIncrease);
         }
         //If nobody died counting points decide winner
-        FightResult loserResult= null;
         if (winner==null){
             fightResult.setLog(logEntries);
             if(pointsList.get(0)>pointsList.get(1)){
-               fightService.setResult(fightResult, attacker, defender);
+                fightResult.setGoldGained(robDefender(attacker, defender));
+                fightService.setResult(fightResult, attacker, defender);
             } else if (pointsList.get(1) > pointsList.get(0)) {
                 attackerLost=true;
-                loserResult=fightService.setResult(fightResult, defender, attacker);
+                loseResult=fightService.setResult(fightResult, defender, attacker);
             }else{
                 //If tied, player won stays null
                 FightResult tieResult=new FightResult();
@@ -97,7 +98,7 @@ public class PvPService {
         }
         playerRepository.save(attacker);
         playerRepository.save(defender);
-        return attackerLost?loserResult:fightResult;
+        return attackerLost?loseResult:fightResult;
     }
 
     public Player round(String attackerUsername, String defenderUsername, int round, Player attacker, Player defender, List<Integer> pointsList, List<Double> secondHitList, List<FightLogEntry> logEntries){
@@ -107,7 +108,7 @@ public class PvPService {
         int[] defenderMinMax=playerService.calculateDmg(defender);
 
         FightLogEntry fightLogEntry = new FightLogEntry();
-        fightLogEntry.setActor(attacker.getUser().getUsername());
+        fightLogEntry.setActor(attackerUsername);
         fightLogEntry.setRound(round);
 
 
@@ -120,7 +121,8 @@ public class PvPService {
             pointsList.set(0, pointsList.get(0) + dmg);
             defender.setCurrentHP(defender.getCurrentHP()-dmg);
             fightLogEntry.setMessage(attackerUsername + " hits for " +dmg+ " hit points.");
-
+        }else{
+            fightLogEntry.setMessage(attackerUsername + " missed");
         }
         if(secondHitList.get(0)>=1){
             int dmg=fightService.calculateDmg(attackerMinMax,defender.getArmor());
@@ -131,7 +133,6 @@ public class PvPService {
             defender.setCurrentHP(defender.getCurrentHP()-dmg);
             secondHitList.set(0, secondHitList.get(0)-1);
             fightLogEntry.setDoubleHitMessage("Double attack! " + attackerUsername + " hits for " +dmg+ " hit points.");
-
         }
 
         //Check if defender ded
@@ -141,7 +142,12 @@ public class PvPService {
             logEntries.add(fightLogEntry);
             return attacker;
         }
+        logEntries.add(fightLogEntry);
         //Defender turn
+
+        fightLogEntry = new FightLogEntry();
+        fightLogEntry.setActor(defenderUsername);
+        fightLogEntry.setRound(round);
         if(fightService.checkHit(defender.getPerception(),attacker.getDexterity(),lvlDiffDefender)){
             int dmg=fightService.calculateDmg(defenderMinMax,attacker.getArmor());
             if(fightService.checkCrit(defender,attacker)){
@@ -150,7 +156,8 @@ public class PvPService {
             pointsList.set(1, pointsList.get(1) + dmg);
             attacker.setCurrentHP(attacker.getCurrentHP()-dmg);
             fightLogEntry.setMessage(defenderUsername + " hits for " +dmg+ " hit points.");
-
+        }else {
+            fightLogEntry.setMessage(defenderUsername + " missed");
         }
         if(secondHitList.get(1)>=1){
             int dmg=fightService.calculateDmg(defenderMinMax,attacker.getArmor());
@@ -161,8 +168,8 @@ public class PvPService {
             attacker.setCurrentHP(attacker.getCurrentHP()-dmg);
             secondHitList.set(1, secondHitList.get(1)-1);
             fightLogEntry.setDoubleHitMessage("Double attack! " + defenderUsername + " hits for " +dmg+ " hit points.");
-
         }
+
         if(attacker.getCurrentHP()<=1){
             attacker.setCurrentHP(1);
             fightLogEntry.setEndOfFight(attackerUsername + " fainted. " + defenderUsername + " wins!");
@@ -171,6 +178,13 @@ public class PvPService {
         }
         logEntries.add(fightLogEntry);
         return null;
+    }
+
+    public int robDefender(Player winner, Player loser){
+        int robbedGold=loser.getGold()/10;
+        loser.setGold(loser.getGold()-robbedGold);
+        winner.setGold(winner.getGold()+robbedGold);
+        return robbedGold;
     }
 
 }
