@@ -1,12 +1,9 @@
 package org.example.projectbackend.service;
 
 import org.example.projectbackend.dto.TopDivDto;
-import org.example.projectbackend.entity.Inventory;
 import org.example.projectbackend.entity.Monster;
 import org.example.projectbackend.entity.Player;
-import org.example.projectbackend.entity.User;
 import org.example.projectbackend.entity.items.ItemTemplate;
-import org.example.projectbackend.repository.InventoryRepository;
 import org.example.projectbackend.repository.ItemTemplateRepository;
 import org.example.projectbackend.repository.MonsterRepository;
 import org.example.projectbackend.repository.UserRepository;
@@ -32,8 +29,7 @@ public class GameService {
     }
 
     public TopDivDto giveTopDto(String username){
-        User user = userRepository.findByUsername(username).orElse(null);
-        Player player = user.getPlayer();
+        Player player = playerService.getPlayer(username);
         int[] damages=playerService.calculateDmg(player);
         int armor=armor(player);
         int[] regenTime = calculateTimeToRegen();
@@ -43,9 +39,9 @@ public class GameService {
 
     public int[] calculateMonsterDmg(String monsterName){
         Monster monster = monsterRepository.getMonsterByName(monsterName);
-       int minDmg=monster.getMinDamage() + monster.getStrength()/5;
-       int maxDmg=monster.getMaxDamage() + monster.getStrength()/5;
-       return new int[]{minDmg,maxDmg};
+        int minDmg=monster.getMinDamage() + monster.getStrength()/5;
+        int maxDmg=monster.getMaxDamage() + monster.getStrength()/5;
+        return new int[]{minDmg,maxDmg};
     }
 
     public int[] calculateTimeToRegen(){
@@ -75,20 +71,6 @@ public class GameService {
 
 
 
-    public boolean hasLoot() {
-        int rand = new Random().nextInt(100);
-        return rand < 70;
-    }
 
-    public int randomizeLoot(Monster monster){
-        int monsterLvl=monster.getLevel();
-        int minLvl=monsterLvl-3;
-        if(minLvl<1){
-            minLvl=1;
-        }
-        int maxLvl=monsterLvl+3;
-        List<ItemTemplate> itemTemplates=itemTemplateRepository.findByLvlBetween(minLvl, maxLvl);
-        int rnd = new Random().nextInt(itemTemplates.size());
-        return Math.toIntExact(itemTemplates.get(rnd).getId());
-    }
+
 }

@@ -1,11 +1,11 @@
 package org.example.projectbackend.service;
 
+import org.example.projectbackend.entity.Combatant;
 import org.example.projectbackend.entity.FightResult;
 import org.example.projectbackend.entity.Player;
-import org.example.projectbackend.entity.User;
+import org.example.projectbackend.entity.RoundResult;
 import org.example.projectbackend.logs.FightLogEntry;
 import org.example.projectbackend.repository.PlayerRepository;
-import org.example.projectbackend.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -17,23 +17,23 @@ import java.util.List;
 public class PvPService {
 
     private final PlayerService playerService;
-    UserRepository userRepository;
     FightService fightService;
     PlayerRepository playerRepository;
 
-    public PvPService(FightService fightService, UserRepository userRepository, PlayerRepository playerRepository, PlayerService playerService) {
-        this.userRepository = userRepository;
+    public PvPService(FightService fightService, PlayerRepository playerRepository, PlayerService playerService) {
+
         this.playerRepository = playerRepository;
         this.fightService = fightService;
         this.playerService = playerService;
     }
 
+
+
     public FightResult createPVP(String attackerUsername, String defenderUsername){
-        User user1=userRepository.findByUsername(attackerUsername).orElse(null);
-        User user2=userRepository.findByUsername(defenderUsername).orElse(null);
-        System.out.println("Searching for user " + defenderUsername);
-        Player attacker= user1.getPlayer();
-        Player defender= user2.getPlayer();
+        Player attacker= playerService.getPlayer(attackerUsername);
+        Player defender= playerService.getPlayer(defenderUsername);
+        Combatant combatant1=fightService.playerToCombatant(attacker);
+        Combatant combatant2=fightService.playerToCombatant(defender);
 
         FightResult fightResult = new FightResult();
         FightResult loseResult = new FightResult();
@@ -52,133 +52,54 @@ public class PvPService {
 
 
         Player winner=null;
+        Player loser=null;
         boolean attackerLost=false;
-        for(int i=1; i<=20;i++){
-            winner=round(attackerUsername,defenderUsername,i, attacker,defender,pointsList, secondHitList, logEntries);
-            if(winner!=null){
-                fightResult.setLog(logEntries);
-                fightResult.setPlayerWon(true);
-                winner.getFightResults().add(fightResult);
-                BeanUtils.copyProperties(fightResult,loseResult);
-                loseResult.setPlayerWon(false);
-                fightResult.setPlayer(winner);
-                if(winner==attacker){
-                    fightResult.setGoldGained(robDefender(attacker, defender));
-                    defender.getFightResults().add(loseResult);
-                    loseResult.setPlayer(defender);
+        int afterFightHpAttacker=0;
+        int afterFightHpDefender=0;
+
+        for(int i=1;i<=10;i++){
+            RoundResult result=fightService.round(i,combatant1, combatant2, secondHitList, logEntries, pointsList);
+            afterFightHpAttacker=result.attackerHP;
+            afterFightHpDefender=result.defenderHP;
+            if(result.endOfFight){
+                if(afterFightHpAttacker>afterFightHpDefender){
+                    winner=attacker;
+                    loser=defender;
                 }else{
-                    attacker.getFightResults().add(loseResult);
-                    loseResult.setPlayer(attacker);
-                    attackerLost=true;
+                    winner=defender;
+                    loser=attacker;
                 }
                 break;
             }
-            secondHitList.set(0, secondHitList.get(0)+secondHitAIncrease);
-            secondHitList.set(1, secondHitList.get(1)+secondHitDIncrease);
         }
-        //If nobody died counting points decide winner
-        if (winner==null){
-            fightResult.setLog(logEntries);
+        if(winner==null&&loser==null){
             if(pointsList.get(0)>pointsList.get(1)){
-                fightResult.setGoldGained(robDefender(attacker, defender));
-                fightService.setResult(fightResult, attacker, defender);
-            } else if (pointsList.get(1) > pointsList.get(0)) {
-                attackerLost=true;
-                loseResult=fightService.setResult(fightResult, defender, attacker);
-            }else{
-                //If tied, player won stays null
-                FightResult tieResult=new FightResult();
-                BeanUtils.copyProperties(fightResult,tieResult);
-                fightResult.setPlayer(attacker);
-                tieResult.setPlayer(defender);
-                tieResult.setId(null);
-                attacker.getFightResults().add(fightResult);
-                defender.getFightResults().add(tieResult);
+                winner=attacker;
+                loser=defender;
+            }else if(pointsList.get(1)>=pointsList.get(0)){
+                loser=attacker;
+                winner=defender;
             }
         }
+        attacker.setCurrentHP(afterFightHpAttacker);
+        defender.setCurrentHP(afterFightHpDefender);
+        fightResult.setLog(logEntries);
+        fightResult.setPlayerWon(true);
+
+        if(winner==attacker){
+            fightResult.setGoldGained(robDefender(attacker,defender));
+        }
+
+        BeanUtils.copyProperties(fightResult,loseResult);
+        loseResult.setPlayerWon(false);
+
+        fightService.setResult(fightResult, winner, loser);
         playerRepository.save(attacker);
         playerRepository.save(defender);
-        return attackerLost?loseResult:fightResult;
+
+        return fightResult;
     }
 
-    public Player round(String attackerUsername, String defenderUsername, int round, Player attacker, Player defender, List<Integer> pointsList, List<Double> secondHitList, List<FightLogEntry> logEntries){
-        int lvlDiffAttacker= attacker.getLvl()-defender.getLvl();
-        int lvlDiffDefender= defender.getLvl()-attacker.getLvl();
-        int[] attackerMinMax=playerService.calculateDmg(attacker);
-        int[] defenderMinMax=playerService.calculateDmg(defender);
-
-        FightLogEntry fightLogEntry = new FightLogEntry();
-        fightLogEntry.setActor(attackerUsername);
-        fightLogEntry.setRound(round);
-
-
-        //Attacker turn
-        if(fightService.checkHit(attacker.getPerception(),defender.getDexterity(),lvlDiffAttacker)){
-            int dmg=fightService.calculateDmg(attackerMinMax,defender.getArmor());
-            if(fightService.checkCrit(attacker,defender)){
-                dmg=dmg*2;
-            }
-            pointsList.set(0, pointsList.get(0) + dmg);
-            defender.setCurrentHP(defender.getCurrentHP()-dmg);
-            fightLogEntry.setMessage(attackerUsername + " hits for " +dmg+ " hit points.");
-        }else{
-            fightLogEntry.setMessage(attackerUsername + " missed");
-        }
-        if(secondHitList.get(0)>=1){
-            int dmg=fightService.calculateDmg(attackerMinMax,defender.getArmor());
-            if(fightService.checkCrit(attacker,defender)){
-                dmg=dmg*2;
-            }
-            pointsList.set(0, pointsList.get(0) + dmg);
-            defender.setCurrentHP(defender.getCurrentHP()-dmg);
-            secondHitList.set(0, secondHitList.get(0)-1);
-            fightLogEntry.setDoubleHitMessage("Double attack! " + attackerUsername + " hits for " +dmg+ " hit points.");
-        }
-
-        //Check if defender ded
-        if(defender.getCurrentHP()<=1){
-            defender.setCurrentHP(1);
-            fightLogEntry.setEndOfFight(defenderUsername + " fainted. " + attackerUsername + " wins!");
-            logEntries.add(fightLogEntry);
-            return attacker;
-        }
-        logEntries.add(fightLogEntry);
-        //Defender turn
-
-        fightLogEntry = new FightLogEntry();
-        fightLogEntry.setActor(defenderUsername);
-        fightLogEntry.setRound(round);
-        if(fightService.checkHit(defender.getPerception(),attacker.getDexterity(),lvlDiffDefender)){
-            int dmg=fightService.calculateDmg(defenderMinMax,attacker.getArmor());
-            if(fightService.checkCrit(defender,attacker)){
-                dmg=dmg*2;
-            }
-            pointsList.set(1, pointsList.get(1) + dmg);
-            attacker.setCurrentHP(attacker.getCurrentHP()-dmg);
-            fightLogEntry.setMessage(defenderUsername + " hits for " +dmg+ " hit points.");
-        }else {
-            fightLogEntry.setMessage(defenderUsername + " missed");
-        }
-        if(secondHitList.get(1)>=1){
-            int dmg=fightService.calculateDmg(defenderMinMax,attacker.getArmor());
-            if(fightService.checkCrit(defender,attacker)){
-                dmg=dmg*2;
-            }
-            pointsList.set(1, pointsList.get(1) + dmg);
-            attacker.setCurrentHP(attacker.getCurrentHP()-dmg);
-            secondHitList.set(1, secondHitList.get(1)-1);
-            fightLogEntry.setDoubleHitMessage("Double attack! " + defenderUsername + " hits for " +dmg+ " hit points.");
-        }
-
-        if(attacker.getCurrentHP()<=1){
-            attacker.setCurrentHP(1);
-            fightLogEntry.setEndOfFight(attackerUsername + " fainted. " + defenderUsername + " wins!");
-            logEntries.add(fightLogEntry);
-            return defender;
-        }
-        logEntries.add(fightLogEntry);
-        return null;
-    }
 
     public int robDefender(Player winner, Player loser){
         int robbedGold=loser.getGold()/10;

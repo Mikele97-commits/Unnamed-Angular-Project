@@ -52,17 +52,14 @@ public class PlayerService {
             player.setFinalHP(player.getBaseHP()+player.getEndurance()*5 + player.getLvl()*20);
         }
 
-    public boolean lvlUp(String username){
-        User user = userRepository.findByUsername(username).orElse(null);
-        Player player = user.getPlayer();
+    public void lvlUp(Player player){
+
         if(player.getCurrentExp()>=player.getNxtLvlExp()){
             player.setLvl(player.getLvl()+1);
             player.setCurrentExp(0);
             player.setNxtLvlExp((int) (100 * player.getLvl() * Math.pow(1.1, player.getLvl()) - 1));
-            userRepository.save(user);
-            return true;
+            playerRepository.save(player);
         }
-        return false;
     }
 
     public int[] calculateDmg(Player player){
@@ -78,6 +75,11 @@ public class PlayerService {
         int finalMin=player.getBaseDmg()+min+ player.getStrength()/5;
         int finalMax=player.getBaseDmg()+max+ player.getStrength()/5;
         return new int[]{finalMin,finalMax};
+    }
+
+    public Player getPlayer(String username){
+            User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found: " + username));
+            return user.getPlayer();
     }
 
 }

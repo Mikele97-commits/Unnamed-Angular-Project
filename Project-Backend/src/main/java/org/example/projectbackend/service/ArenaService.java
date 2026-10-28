@@ -3,10 +3,8 @@ package org.example.projectbackend.service;
 import org.example.projectbackend.dto.ProfileDto;
 import org.example.projectbackend.entity.FightResult;
 import org.example.projectbackend.entity.Player;
-import org.example.projectbackend.entity.User;
 import org.example.projectbackend.repository.InventoryRepository;
 import org.example.projectbackend.repository.PlayerRepository;
-import org.example.projectbackend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,20 +14,20 @@ import java.util.Random;
 
 @Service
 public class ArenaService {
-    UserRepository userRepository;
     PlayerRepository playerRepository;
     InventoryRepository inventoryRepository;
+    PlayerService playerService;
     PvPService pvpService;
-    public ArenaService(PvPService pvpService, InventoryRepository inventoryRepository, PlayerRepository playerRepository, UserRepository userRepository) {
+    public ArenaService(PlayerService playerService, PvPService pvpService, InventoryRepository inventoryRepository, PlayerRepository playerRepository) {
         this.playerRepository = playerRepository;
         this.inventoryRepository = inventoryRepository;
-        this.userRepository = userRepository;
         this.pvpService = pvpService;
+        this.playerService = playerService;
+
     }
 
     public List<ProfileDto> findEnemies(int lvl, String searcher) {
-        User user = userRepository.findByUsername(searcher).orElse(null);
-        Player player=user.getPlayer();
+        Player player = playerService.getPlayer(searcher);
         Long searcherId=player.getId();
         int minLvl=Math.max(1,lvl-3);
         int maxLvl=lvl+3;

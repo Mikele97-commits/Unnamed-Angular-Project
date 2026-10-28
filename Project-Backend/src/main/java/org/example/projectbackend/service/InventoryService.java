@@ -2,12 +2,12 @@ package org.example.projectbackend.service;
 
 import org.example.projectbackend.entity.Inventory;
 import org.example.projectbackend.entity.Player;
-import org.example.projectbackend.entity.User;
 import org.example.projectbackend.entity.items.Armor;
 import org.example.projectbackend.entity.items.ItemTemplate;
 import org.example.projectbackend.entity.items.Weapon;
 import org.example.projectbackend.repository.InventoryRepository;
 import org.example.projectbackend.repository.ItemTemplateRepository;
+import org.example.projectbackend.repository.PlayerRepository;
 import org.example.projectbackend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,24 +15,25 @@ import java.util.List;
 
 @Service
 public class InventoryService {
-        UserRepository userRepository;
+    private final PlayerRepository playerRepository;
+    UserRepository userRepository;
         ItemTemplateRepository itemTemplateRepository;
         InventoryRepository inventoryRepository;
-        public InventoryService(InventoryRepository inventoryRepository, UserRepository userRepository, ItemTemplateRepository itemTemplateRepository) {
+        PlayerService playerService;
+        public InventoryService(PlayerService playerService, InventoryRepository inventoryRepository, UserRepository userRepository, ItemTemplateRepository itemTemplateRepository, PlayerRepository playerRepository) {
             this.inventoryRepository = inventoryRepository;
             this.userRepository = userRepository;
             this.itemTemplateRepository = itemTemplateRepository;
+            this.playerService = playerService;
+            this.playerRepository = playerRepository;
         }
 
         public List<Inventory> getInventory(String username){
-            User user = userRepository.findByUsername(username).orElse(null);
-            Player player = user.getPlayer();
-            return player.getInventory();
+            return playerService.getPlayer(username).getInventory();
         }
 
         public void equipItem(String username,int itemId){
-            User user = userRepository.findByUsername(username).orElse(null);
-            Player player = user.getPlayer();
+            Player player = playerService.getPlayer(username);
             Inventory inventory = inventoryRepository.findById(itemId).orElse(null);
             String type = inventory.getType();
             if(inventoryRepository.findByPlayerAndTypeAndEquippedTrue(player,type).isEmpty()){
@@ -50,15 +51,13 @@ public class InventoryService {
             } else if (type.equals("weapon")) {
                 player.setEquippedWeapon(inventory);
             }
-            userRepository.save(user);
-
+            playerRepository.save(player);
 
         }
 
         public void unequipItem(String username,int itemId){
-            System.out.println("got request for user "+username+" to unequip item "+itemId);
-            User user = userRepository.findByUsername(username).orElse(null);
-            Player player = user.getPlayer();
+            Player player = playerService.getPlayer(username);
+
             Inventory inventory = inventoryRepository.findById(itemId).orElse(null);
             String type = inventory.getType();
             if(type.equals("armor")){
@@ -67,15 +66,11 @@ public class InventoryService {
                 player.setEquippedWeapon(null);
             }
             inventory.setEquipped(false);
-            userRepository.save(user);
-
+            playerRepository.save(player);
         }
 
         public String addItem(String username, int templateId){
-            System.out.println("Username:"+username);
-            System.out.println("Item ID:"+ templateId);
-            User user = userRepository.findByUsername(username).orElse(null);
-            Player player = user.getPlayer();
+            Player player = playerService.getPlayer(username);
             Inventory inventoryItem = new Inventory();
             ItemTemplate itemTemplate = itemTemplateRepository.findById(templateId).orElse(null);
             inventoryItem.setTemplateId(templateId);
@@ -92,7 +87,7 @@ public class InventoryService {
                 inventoryItem.setFinalMaxDmg(((Weapon) itemTemplate).getMaxDmg());
             }
             player.getInventory().add(inventoryItem);
-            userRepository.save(user);
+            playerRepository.save(player);
             return itemTemplate.getName()+" +0";
         }
 }

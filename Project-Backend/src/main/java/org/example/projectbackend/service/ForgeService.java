@@ -3,7 +3,6 @@ package org.example.projectbackend.service;
 import org.example.projectbackend.dto.ForgingInfoDto;
 import org.example.projectbackend.entity.Inventory;
 import org.example.projectbackend.entity.Player;
-import org.example.projectbackend.entity.User;
 import org.example.projectbackend.entity.items.Armor;
 import org.example.projectbackend.entity.items.ItemTemplate;
 import org.example.projectbackend.entity.items.Weapon;
@@ -15,18 +14,20 @@ import java.util.Random;
 @Service
 public class ForgeService {
 
-    private final UserRepository userRepository;
+    private final PlayerRepository playerRepository;
     InventoryRepository inventoryRepository;
     ItemTemplateRepository itemTemplateRepository;
     WeaponTemplateRepository weaponTemplateRepository;
     ArmorTemplateRepository armorTemplateRepository;
+    PlayerService playerService;
 
-    public ForgeService(InventoryRepository inventoryRepository, ItemTemplateRepository itemTemplateRepository, WeaponTemplateRepository weaponTemplateRepository, ArmorTemplateRepository armorTemplateRepository, UserRepository userRepository) {
+    public ForgeService(PlayerService playerService, InventoryRepository inventoryRepository, ItemTemplateRepository itemTemplateRepository, WeaponTemplateRepository weaponTemplateRepository, ArmorTemplateRepository armorTemplateRepository, PlayerRepository playerRepository) {
         this.inventoryRepository = inventoryRepository;
         this.itemTemplateRepository = itemTemplateRepository;
         this.weaponTemplateRepository = weaponTemplateRepository;
         this.armorTemplateRepository = armorTemplateRepository;
-        this.userRepository = userRepository;
+        this.playerService = playerService;
+        this.playerRepository = playerRepository;
     }
 
     public ForgingInfoDto getForgingInfo(Long itemId){
@@ -64,8 +65,8 @@ public class ForgeService {
     }
 
     public String upgrade(Long itemId, String username){
-        User user= userRepository.findByUsername(username).orElse(null);
-        Player player=user.getPlayer();
+        Player player = playerService.getPlayer(username);
+
         int moneys=player.getGold();
 
         ForgingInfoDto forgingInfoDto = getForgingInfo(itemId);
@@ -86,7 +87,7 @@ public class ForgeService {
         item.setFinalPlus(forgingInfoDto.finalPlus());
         item.setPrice(item.getPrice()*2);
         player.setGold(player.getGold()- forgingInfoDto.cost());
-        userRepository.save(user);
+        playerRepository.save(player);
         return "Item upgraded successfully!";
     }
 

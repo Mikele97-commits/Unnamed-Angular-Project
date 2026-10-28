@@ -7,6 +7,7 @@ import org.example.projectbackend.entity.User;
 import org.example.projectbackend.repository.ItemTemplateRepository;
 import org.example.projectbackend.repository.UserRepository;
 import org.example.projectbackend.service.InventoryService;
+import org.example.projectbackend.service.PlayerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,17 +18,18 @@ public class AdminController {
     UserRepository userRepository;
     ItemTemplateRepository itemTemplateRepository;
     InventoryService inventoryService;
+    PlayerService playerService;
 
-    public AdminController(InventoryService inventoryService, UserRepository userRepository,ItemTemplateRepository itemTemplateRepository) {
+    public AdminController(PlayerService playerService, InventoryService inventoryService, UserRepository userRepository,ItemTemplateRepository itemTemplateRepository) {
         this.userRepository = userRepository;
         this.itemTemplateRepository = itemTemplateRepository;
         this.inventoryService = inventoryService;
+        this.playerService = playerService;
     }
     @PostMapping("/set-energy")
     @Transactional
     public ResponseEntity<String> setEnergy(@RequestBody AdminDto adminDto) {
-        User user = userRepository.findByUsername(adminDto.username()).orElse(null);
-        Player player = user.getPlayer();
+        Player player = playerService.getPlayer(adminDto.username());
         player.setCurrEnergy(adminDto.amount());
         if (player.getCurrEnergy()>player.getMaxEnergy()) {
             player.setCurrEnergy(player.getMaxEnergy());
@@ -41,8 +43,7 @@ public class AdminController {
     @PostMapping("/set-hp")
     @Transactional
     public ResponseEntity<String> setHp(@RequestBody AdminDto adminDto) {
-        User user = userRepository.findByUsername(adminDto.username()).orElse(null);
-        Player player = user.getPlayer();
+        Player player = playerService.getPlayer(adminDto.username());
         player.setCurrentHP(adminDto.amount());
         if(player.getCurrentHP()>player.getFinalHP()){
             player.setCurrentHP(player.getFinalHP());

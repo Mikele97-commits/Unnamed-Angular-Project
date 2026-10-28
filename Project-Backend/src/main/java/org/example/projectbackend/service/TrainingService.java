@@ -4,30 +4,25 @@ import jakarta.transaction.Transactional;
 import org.example.projectbackend.dto.TrainingDto;
 import org.example.projectbackend.dto.TrainingResponseDto;
 import org.example.projectbackend.entity.Player;
-import org.example.projectbackend.entity.User;
-import org.example.projectbackend.repository.UserRepository;
+
 import org.springframework.stereotype.Service;
 
 @Service
 public class TrainingService {
-    UserRepository userRepository;
     PlayerService playerService;
 
-    public TrainingService(UserRepository userRepository, PlayerService playerService) {
-        this.userRepository = userRepository;
+    public TrainingService(PlayerService playerService) {
         this.playerService = playerService;
     }
 
     public TrainingResponseDto getTrainingStats(String username) {
-        User user = userRepository.findByUsername(username).orElse(null);
-        Player player = user.getPlayer();
+        Player player= playerService.getPlayer(username);
         return new TrainingResponseDto("Data loaded", true,new TrainingDto(player.getStrength(), player.getEndurance(), player.getPerception(), player.getSpeed(), player.getDexterity(), player.getLuck()));
     }
 
     @Transactional
     public TrainingResponseDto increaseStat(String username, String stat) {
-        User user = userRepository.findByUsername(username).orElse(null);
-        Player player = user.getPlayer();
+        Player player = playerService.getPlayer(username);
         if(player.getCurrEnergy()>=5){
             player.setCurrEnergy(player.getCurrEnergy()-5);
         }else{

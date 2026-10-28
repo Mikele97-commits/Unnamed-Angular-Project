@@ -1,195 +1,147 @@
 package org.example.projectbackend.service;
 
-import org.example.projectbackend.entity.FightResult;
-import org.example.projectbackend.entity.Monster;
-import org.example.projectbackend.entity.Player;
-import org.example.projectbackend.entity.User;
+import org.example.projectbackend.entity.*;
 import org.example.projectbackend.logs.FightLogEntry;
+import org.example.projectbackend.repository.PlayerRepository;
 import org.example.projectbackend.repository.PvMRepository;
 import org.example.projectbackend.repository.MonsterRepository;
-import org.example.projectbackend.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 @Service
 public class FightService {
+    private final PlayerRepository playerRepository;
     InventoryService inventoryService;
     MonsterRepository monsterRepository;
-    UserRepository userRepository;
     PvMRepository pvMRepository;
     GameService gameService;
     PlayerService playerService;
-    public FightService(PlayerService playerService, GameService gameService, MonsterRepository monsterRepository, UserRepository userRepository, PvMRepository pvMRepository, InventoryService inventoryService) {
+    public FightService(PlayerService playerService, GameService gameService, MonsterRepository monsterRepository, PvMRepository pvMRepository, InventoryService inventoryService, PlayerRepository playerRepository) {
         this.monsterRepository = monsterRepository;
-        this.userRepository = userRepository;
         this.pvMRepository = pvMRepository;
         this.gameService = gameService;
         this.inventoryService = inventoryService;
         this.playerService = playerService;
-    }
-    public Monster createMonster(String monsterName){
-        Monster monster = new Monster();
-        Monster template = monsterRepository.getMonsterByName(monsterName);
-
-        BeanUtils.copyProperties(template,monster);
-        monster.setId(null);
-        monster = randomizeStats(monster);
-        return monster;
-    }
-    public double createRandNumber(){
-        double base = Math.random();
-        base = base*0.4;
-        base=base-0.2;
-        return base;
-    }
-    public Monster randomizeStats(Monster monster){
-
-
-        monster.setStrength(monster.getStrength()+(int)((double)monster.getStrength()*createRandNumber()));
-        monster.setEndurance(monster.getEndurance()+(int)((double)monster.getEndurance()*createRandNumber()));
-        monster.setPerception(monster.getPerception()+(int)((double)monster.getPerception()*createRandNumber()));
-        monster.setSpeed(monster.getSpeed()+(int)((double)monster.getSpeed()*createRandNumber()));
-        monster.setDexterity(monster.getDexterity()+(int)((double)monster.getDexterity()*createRandNumber()));
-        monster.setLuck(monster.getLuck()+(int)((double)monster.getLuck()*createRandNumber()));
-
-        monster.setExpReward(monster.getExpReward()+(int)((double)monster.getExpReward()*createRandNumber()));
-        monster.setGoldReward(monster.getGoldReward()+(int)((double)monster.getGoldReward()*createRandNumber()));
-        return monster;
+        this.playerRepository = playerRepository;
     }
 
-    public FightResult createPvM(String username, String monsterName){
-        FightResult fightResult = new FightResult();
-        fightResult.setAttacker(username);
-        fightResult.setDefender(monsterName);
-        fightResult.setFoughtAt(LocalDateTime.now().toString());
-
-        User user = userRepository.findByUsername(username).orElse(null);
-        Player player = user.getPlayer();
-        Monster monster = createMonster(monsterName);
-        List<Integer> pointsList=initializePointsList();
-        List<Double> secondHitList=initializeSecondHitList();
-        double secondHitPIncrease=((double)(player.getSpeed()-monster.getSpeed())/(double)monster.getSpeed());
-        double secondHitMIncrease=((double)(monster.getSpeed()-player.getSpeed())/(double)player.getSpeed());
-        List<FightLogEntry> logEntries = new ArrayList<>();
-        for(int i=0; i<10;i++){
-            if(round(i+1,player,monster,secondHitList, logEntries, pointsList)){
-                break;
-            }
-            secondHitList.set(0, secondHitList.get(0)+secondHitPIncrease);
-            secondHitList.set(1, secondHitList.get(1)+secondHitMIncrease);
-        }
-        fightResult.setLog(logEntries);
-        if(player.getCurrentHP()>0&&monster.getHp()>0){
-            if(pointsList.get(0)>=pointsList.get(1)){
-                fightResult.setPlayerWon(true);
-            }else{
-                fightResult.setPlayerWon(false);
-            }
-        }else{
-            if(player.getCurrentHP()<=0){
-                fightResult.setPlayerWon(false);
-            }else{
-                fightResult.setPlayerWon(true);
-            }
-        }
-
-        if(fightResult.isPlayerWon()){
-            player.setGold(player.getGold()+monster.getGoldReward());
-            player.setCurrentExp(player.getCurrentExp()+monster.getExpReward());
-            fightResult.setExpGained(monster.getExpReward());
-            fightResult.setGoldGained(monster.getGoldReward());
-            if(gameService.hasLoot()){
-                fightResult.setLoot(inventoryService.addItem(username,gameService.randomizeLoot(monster)));
-            }else {
-                fightResult.setLoot(null);
-            }
-        }
-        fightResult.setPlayer(player);
-        userRepository.save(user);
-        return fightResult;
+    public Combatant monsterToCombatant(Monster monster){
+        return new Combatant(monster.getName(),monster.getLevel(),monster.getPerception(),monster.getDexterity(), monster.getSpeed(), monster.getLuck(),monster.getArmor(), monster.getHp(), new int[] {monster.getMinDamage(),monster.getMaxDamage()});
+    }
+    public Combatant playerToCombatant(Player player){
+        return new Combatant(player.getUser().getUsername(), player.getLvl(), player.getPerception(), player.getDexterity(), player.getSpeed(), player.getLuck(), player.getArmor(), player.getCurrentHP(), playerService.calculateDmg(player));
     }
 
-    public boolean round(int round, Player player, Monster monster, List<Double> secondHitList, List<FightLogEntry> logEntries, List<Integer> pointsList){
+
+
+
+    public RoundResult round(int round, Combatant attacker, Combatant defender, List<Double> secondHitList, List<FightLogEntry> logEntries, List<Integer> pointsList){
+        //Setting round logs info
         FightLogEntry fightLogEntry = new FightLogEntry();
         fightLogEntry.setRound(round);
-        fightLogEntry.setActor(player.getUser().getUsername());
-        //Check if double hit lands
+        fightLogEntry.setActor(attacker.name);
+
+        //Check if there's double hit
         int times=1;
         if(secondHitList.get(0)>=1){
             fightLogEntry.setDoubleHit("Got double hit");
             times++;
             secondHitList.set(0,secondHitList.get(0)-1);
         }
-        //Player starts with attack
+
+        //Attacker starts with attack. "i" equals number of attacks, dependent on double hit check
         for(int i=1;i<=times;i++) {
-            if (checkHit(player.getPerception(), monster.getDexterity(), player.getLvl() - monster.getLevel())) {
-                int[] damages=playerService.calculateDmg(player);
-                int monsterArmor= monster.getArmor();
-                monster.setHp(monster.getHp() - calculateDmg(damages, monsterArmor));
-                pointsList.set(0, pointsList.get(0) + calculateDmg(damages, monsterArmor));
+            if (checkHit(attacker.perception, defender.dexterity, attacker.level - defender.level)) {
+                String critHitMessage="";
+                //Hit connected. Calculating damage to defender
+                int attackerDamage=calculateDmg(attacker.damageRange, defender.armor);
+                //Check for crit
+                if(checkCrit(attacker, defender)){
+                    critHitMessage="Critical hit! ";
+                    attackerDamage=attackerDamage*2;
+                }
+                //Subtracting said damage from defender HP
+                defender.currentHp=defender.currentHp-attackerDamage;
+                //Adding the damage to attackers points
+                pointsList.set(0, pointsList.get(0) + attackerDamage);
                 if(i!=2) {
-                    fightLogEntry.setMessage("You hit for " +calculateDmg(damages, monsterArmor)+ " hit points.");
+                    //When it was attackers first strike of the round
+                    fightLogEntry.setMessage(critHitMessage+ attacker.name + " hit for " +attackerDamage+ " hit points.");
                 }else {
-                    fightLogEntry.setDoubleHitMessage("You hit for " +calculateDmg(damages, monsterArmor)+ " hit points.");
+                    //When he rolled and hit the second one
+                    fightLogEntry.setDoubleHitMessage(critHitMessage+ attacker.name + " hit for " +attackerDamage+ " hit points.");
                 }
             }else {
+                //Hit missed
                 if(i!=2) {
-                    fightLogEntry.setMessage("You missed");
+                    //If was first hit
+                    fightLogEntry.setMessage(attacker.name + " missed");
                 }else{
-                    fightLogEntry.setDoubleHitMessage("You missed second hit");
+                    //If was second hit
+                    fightLogEntry.setDoubleHitMessage(attacker.name + " missed second hit");
                 }
             }
         }
 
-        //Check if monster defeated
-        if(monster.getHp()<=0){
-            fightLogEntry.setEndOfFight(monster.getName() + " dies. You win!");
+        //Check if defender defeated
+        if(defender.currentHp<=0){
+            fightLogEntry.setEndOfFight(defender.name + " dies. " + attacker.name +" win!");
             logEntries.add(fightLogEntry);
-            return true;
+            return new RoundResult(true, attacker.currentHp, defender.currentHp);
         }
+        //Saving log
         logEntries.add(fightLogEntry);
 
+        //Creating new log for defenders turn
         fightLogEntry = new FightLogEntry();
         fightLogEntry.setRound(round);
-        fightLogEntry.setActor(monster.getName());
-        //Monster turn
+        fightLogEntry.setActor(defender.name);
+
+        //Check if there's double hit
         times=1;
         if(secondHitList.get(1)>=1){
             times++;
             secondHitList.set(1,secondHitList.get(1)-1);
-            fightLogEntry.setDoubleHit(monster.getName()+" got double hit");
+            fightLogEntry.setDoubleHit(defender.name+" got double hit");
         }
+
+        //Defender attacks. "i" equals number of attacks, dependent on double hit check
         for(int i=1;i<=times;i++) {
-            if (checkHit(monster.getPerception(), player.getDexterity(), monster.getLevel() - player.getLvl())) {
-                int[] damages = gameService.calculateMonsterDmg(monster.getName());
-                int playerArmor= gameService.armor(player);
-                int finalDmg=calculateDmg(damages, playerArmor);
-                player.setCurrentHP(player.getCurrentHP() - finalDmg);
-                pointsList.set(1, pointsList.get(1) + finalDmg);
+            if (checkHit(defender.perception, attacker.dexterity, defender.level - attacker.level)) {
+                String critHitMessage="";
+                int defenderDamage=calculateDmg(defender.damageRange, attacker.armor);
+                if(checkCrit(defender, attacker)){
+                    critHitMessage="Critical hit! ";
+                    defenderDamage=defenderDamage*2;
+                }
+                attacker.currentHp=attacker.currentHp-defenderDamage;
+                pointsList.set(1, pointsList.get(1) + defenderDamage);
                 if(i!=2) {
-                    fightLogEntry.setMessage(monster.getName() + " hits for " + finalDmg + " hit points.");
+                    fightLogEntry.setMessage(critHitMessage+defender.name + " hits for " + defenderDamage + " hit points.");
                 }else{
-                    fightLogEntry.setDoubleHitMessage(monster.getName() + " hits for " + finalDmg + " hit points.");
+                    fightLogEntry.setDoubleHitMessage(critHitMessage+defender.name + " hits for " + defenderDamage + " hit points.");
                 }
             }else{
                 if(i!=2) {
-                    fightLogEntry.setMessage(monster.getName() + " missed");
+                    fightLogEntry.setMessage(defender.name + " missed");
                 }else{
-                    fightLogEntry.setDoubleHitMessage(monster.getName()+" missed second hit");
+                    fightLogEntry.setDoubleHitMessage(defender.name+" missed second hit");
                 }
             }
         }
 
-        if(player.getCurrentHP()<=0){
-            fightLogEntry.setEndOfFight("You die.");
+        //Check if attacker defeated
+        if(attacker.currentHp<=0){
+            fightLogEntry.setEndOfFight(attacker.name + " dies. " + defender.name +" win!");
+            logEntries.add(fightLogEntry);
+            return new RoundResult(true, attacker.currentHp, defender.currentHp);
         }
         logEntries.add(fightLogEntry);
-        return player.getCurrentHP() <= 0;
+        return new RoundResult(false, attacker.currentHp, defender.currentHp);
     }
 
     public boolean checkHit(int attackerPer, int defenderDex, int lvlDiff){
@@ -202,11 +154,11 @@ public class FightService {
         return roll < hitChance;
     }
 
-    public boolean checkCrit(Player attacker, Player defender) {
+    public boolean checkCrit(Combatant attacker, Combatant defender) {
         double critChance = 5.0;
 
-        critChance += attacker.getLuck() * 0.3;
-        critChance -= defender.getLuck() * 0.1;
+        critChance += attacker.luck * 0.3;
+        critChance -= defender.luck * 0.1;
 
 
 
@@ -238,7 +190,7 @@ public class FightService {
         pointsList.add(0);
         return pointsList;
     }
-    public FightResult setResult(FightResult fightResult, Player winner, Player loser){
+    public void setResult(FightResult fightResult, Player winner, Player loser){
         fightResult.setPlayerWon(true);
         winner.getFightResults().add(fightResult);
         FightResult loseResult = new FightResult();
@@ -248,9 +200,6 @@ public class FightService {
         loser.getFightResults().add(loseResult);
         fightResult.setPlayer(winner);
         loseResult.setPlayer(loser);
-        return loseResult;
     }
-
-
-
 }
+
